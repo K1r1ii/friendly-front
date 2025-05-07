@@ -1,6 +1,6 @@
 function Home() {
     return (
-        <div>
+        <div className="d-flex justify-content-center align-items-center vh-100">
             <h1>Первая страница Friendly</h1>
         </div>
     )
