@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { api } from "../api/axios";
+import { profileAPI } from "../api/profile";
 
 export default function EditProfile() {
   const { userData } = useAuth();
@@ -43,8 +44,8 @@ export default function EditProfile() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.patch("/profile/update_information", formData);
-      window.location.href = "/profile/get_information";
+      await profileAPI.updateProfile(formData);
+      window.location.href = "/profile";
     } catch (err) {
         const errorResponse = err.response;
 
@@ -63,34 +64,50 @@ export default function EditProfile() {
   };
 
   return (
-    <div className="container mt-5 mb-5">
-      <h2 className="mb-4 text-center">Edit Profile</h2>
+  <div className="container mt-5 mb-5">
+    <div className="row justify-content-center">
+      <div className="col-md-6">
+        <h2 className="mb-4 text-center">Edit Profile</h2>
 
-      <form onSubmit={handleSubmit}>
-        {["first_name", "last_name", "birthday", "nickname", "sex"].map((field) => (
-          <div className="mb-3" key={field}>
-            <label className="form-label">{field.replace(/\b\w/g, (char) => char.toUpperCase()).replace("_", " ")}</label>
-            <input
-              className="form-control"
-              name={field}
-              value={formData[field]}
-              onChange={handleChange}
-              placeholder={`Введите ${field.replace("_", " ")}`}
-            />
-          </div>
-        ))}
+        <form onSubmit={handleSubmit}>
+          {["first_name", "last_name", "birthday", "nickname", "sex"].map((field) => (
+            <div className="mb-3" key={field}>
+              <label className="form-label">
+                {field
+                  .replace(/_/g, " ")
+                  .replace(/\b\w/g, (char) => char.toUpperCase())}
+              </label>
+              <input
+                className="form-control"
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                placeholder={`Введите ${field.replace("_", " ")}`}
+              />
+            </div>
+          ))}
 
-        {error && (
+          {error && (
             <div className="alert alert-danger mb-4">
               <strong>Error!</strong> {error}
             </div>
           )}
 
-        <button className="btn btn-success" type="submit">Сохранить</button>
-        <button className="btn btn-secondary ms-2" onClick={() => navigate("/profile/get_information")} type="button">
-          Отмена
-        </button>
-      </form>
+          <div className="d-grid gap-2 d-md-flex justify-content-center">
+            <button className="btn btn-success" type="submit">
+              Сохранить
+            </button>
+            <button
+              className="btn btn-secondary ms-2"
+              onClick={() => navigate("/profile")}
+              type="button"
+            >
+              Отмена
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-  );
+  </div>
+);
 }
