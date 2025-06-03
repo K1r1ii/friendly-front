@@ -6,6 +6,8 @@ import Home from './pages/Home';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 import News from "./pages/News";
 import { useState } from 'react';
 import Register from './pages/Registration';
@@ -22,6 +24,23 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path='/registration' element={<Register />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+
+             <Route
+               path="/profile/edit"
+               element={
+                <ProtectedRoute>
+                  <EditProfile />
+                </ProtectedRoute>
+              }
+             />
+
             <Route
               path="/news"
               element={
