@@ -1,9 +1,9 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import { Link } from "react-router-dom";
 
 export default function Header() {
   const userData = useAuth();
-  console.log(userData)
   return (
     <nav
       className="navbar navbar-expand-lg py-1"
@@ -17,13 +17,15 @@ export default function Header() {
 
         {/* Справа: аватар или кнопки */}
         {userData.user ? (
-          <img
-            src={"emblem_logo.png"}
-            alt="User avatar"
-            className="rounded-circle"
-            width={50}
-            height={50}
-          />
+          <Link to="/profile/get_information">
+              <img
+                src="/emblem_logo.png"
+                alt="User avatar"
+                className="rounded-circle"
+                width={50}
+                height={50}
+              />
+            </Link>
         ) : (
           <div>
             <a href="/login" className="btn btn-outline-light me-2">Войти</a>
