@@ -9,7 +9,6 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import News from "./pages/News";
-import { useState } from 'react';
 import Register from './pages/Registration';
 
 function App() {
