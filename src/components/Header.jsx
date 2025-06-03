@@ -1,6 +1,9 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext';
 
-export default function Header({user}) {
+export default function Header() {
+  const userData = useAuth();
+  console.log(userData)
   return (
     <nav
       className="navbar navbar-expand-lg py-1"
@@ -13,9 +16,9 @@ export default function Header({user}) {
         </a>
 
         {/* Справа: аватар или кнопки */}
-        {user && user.avatarUrl ? (
+        {userData.user ? (
           <img
-            src={user.avatarUrl}
+            src={"emblem_logo.png"}
             alt="User avatar"
             className="rounded-circle"
             width={50}
