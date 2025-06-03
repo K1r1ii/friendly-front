@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Login from "./pages/Login";
+import News from "./pages/News";
 import { useState } from 'react';
 import Register from './pages/Registration';
 
@@ -22,9 +23,10 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path='/registration' element={<Register />} />
             <Route
-              path="/dashboard"
+              path="/news"
               element={
                 <ProtectedRoute>
+                  <News />
                 </ProtectedRoute>
               }
             />

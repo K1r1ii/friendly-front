@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { api } from "../api/axios";
 
 const AuthContext = createContext();
 
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   // Функция для загрузки данных пользователя
   const fetchUserData = async () => {
     try {
-      const { data } = await axios.get(`${baseUrl}/profile/get_information`);
+      const { data } = await api.get(`/profile/get_information`);
       console.log(data);
       setUserData(data);
     } catch (error) {
@@ -36,7 +37,6 @@ export const AuthProvider = ({ children }) => {
             logout();
           } else {
             setTokenData(decoded);
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             
             // Загружаем данные пользователя по ID из токена
             await fetchUserData(decoded.user_id);
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (credentials) => {
     try {
-      const { data } = await axios.post(`${baseUrl}/auth/registration`, {email: credentials.email, password: credentials.password});
+      const { data } = await api.post(`/auth/registration`, {email: credentials.email, password: credentials.password});
       console.log("Успешно!")
     } catch (error) {
       throw error.response.data;
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   };
   const login = async (credentials) => {
     try {
-      const { data } = await axios.post(`${baseUrl}/auth/login`, credentials);
+      const { data } = await api.post(`/auth/login`, credentials);
       localStorage.setItem("token", data.access_token);
       setToken(data.access_token);
       const decoded = jwtDecode(data.access_token);
