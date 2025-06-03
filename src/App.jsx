@@ -8,11 +8,11 @@ import Footer from './components/Footer';
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
-import Dashboard from "./pages/Dashboard";
+import News from "./pages/News";
 import { useState } from 'react';
+import Register from './pages/Registration';
 
 function App() {
-  // const userAvatar = "emblem_logo.png";
   const userData = useAuth();
 
   return (
@@ -23,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path='/registration' element={<Register />} />
             <Route
               path="/profile/get_information"
               element={
@@ -41,10 +42,10 @@ function App() {
              />
 
             <Route
-              path="/dashboard"
+              path="/news"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <News />
                 </ProtectedRoute>
               }
             />

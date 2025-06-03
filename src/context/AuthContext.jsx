@@ -2,19 +2,22 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { api } from "../api/axios";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [tokenData, setTokenData] = useState(null);
   const [userData, setUserData] = useState(null); // Новое состояние для данных пользователя
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loading, setLoading] = useState(true); // Состояние загрузки
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   // Функция для загрузки данных пользователя
   const fetchUserData = async () => {
     try {
-      const { data } = await axios.get(`http://109.73.194.68:5050/profile/get_information`);
+      const { data } = await api.get(`/profile/get_information`);
+      console.log(data);
       setUserData(data);
     } catch (error) {
       console.error("Ошибка загрузки данных пользователя:", error);
@@ -33,8 +36,7 @@ export const AuthProvider = ({ children }) => {
           if (decoded.exp * 1000 < Date.now()) {
             logout();
           } else {
-            setUser(decoded);
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            setTokenData(decoded);
             
             // Загружаем данные пользователя по ID из токена
             await fetchUserData(decoded.user_id);
@@ -49,13 +51,21 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, [token]);
 
+  const register = async (credentials) => {
+    try {
+      const { data } = await api.post(`/auth/registration`, {email: credentials.email, password: credentials.password});
+      console.log("Успешно!")
+    } catch (error) {
+      throw error.response.data;
+    }
+  };
   const login = async (credentials) => {
     try {
-      const { data } = await axios.post("http://109.73.194.68:5050/auth/login", credentials);
+      const { data } = await api.post(`/auth/login`, credentials);
       localStorage.setItem("token", data.access_token);
       setToken(data.access_token);
       const decoded = jwtDecode(data.access_token);
-      setUser(decoded);
+      setTokenData(decoded);
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.access_token}`;
       await fetchUserData(); // Загружаем данные после логина
     } catch (error) {
@@ -63,20 +73,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
   const logout = () => {
     localStorage.removeItem("token");
     setToken(null);
-    setUser(null);
+    setTokenData(null);
     setUserData(null); // Очищаем данные при выходе
     delete axios.defaults.headers.common["Authorization"];
   };
 
   return (
     <AuthContext.Provider value={{ 
-      user, 
+      tokenData, 
       userData,
       token, 
       loading,
+      register,
       login, 
       logout,
       fetchUserData // Можно обновлять данные при необходимости

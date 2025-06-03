@@ -1,0 +1,87 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
+import NewsItem from '../components/NewsItem';
+import { newsAPI } from '../api/news';
+
+export default function News() {
+  const { userData } = useAuth();
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setLoading(true);
+        const newsData = await newsAPI.getMyNews();
+        setNews(newsData);
+      } catch (err) {
+        setError(err.message || 'Не удалось загрузить новости');
+        console.error('Ошибка загрузки новостей:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+  return (
+    <div className="container mt-4">
+      <div className="row">
+        <div className="col-lg-8 mx-auto">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h1 className="h3 mb-0">Лента новостей</h1>
+            {userData && (
+              <Link to="/create-news" className="btn btn-primary">
+                <i className="bi bi-plus-lg me-1"></i> Добавить новость
+              </Link>
+            )}
+          </div>
+
+          {loading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Загрузка...</span>
+              </div>
+              <p className="mt-3">Загружаем новости...</p>
+            </div>
+          ) : error ? (
+            <div className="alert alert-danger">
+              <i className="bi bi-exclamation-triangle me-2"></i>
+              {error}
+              <div className="mt-2">
+                <button 
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={() => window.location.reload()}
+                >
+                  Попробовать снова
+                </button>
+              </div>
+            </div>
+          ) : news.length === 0 ? (
+            <div className="card shadow text-center py-5">
+              <div className="card-body">
+                <i className="bi bi-newspaper display-1 text-muted mb-4"></i>
+                <h3 className="card-title">Новостей пока нет</h3>
+                <p className="card-text">
+                  Будьте первым, кто поделится новостью!
+                </p>
+                <Link to="/create-news" className="btn btn-primary mt-2">
+                  Создать новость
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {news.map(item => (
+                <NewsItem key={item.news_id} news={item} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

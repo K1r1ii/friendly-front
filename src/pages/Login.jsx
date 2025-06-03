@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ export default function Login() {
     e.preventDefault();
     try {
       await login({ email, password });
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -59,14 +60,14 @@ export default function Login() {
                     </button>
 
                     <div className="text-center">
-                    <a href="#!" className="text-decoration-none">Забыли пароль?</a>
+                    <Link to="#!" className="text-decoration-none">Забыли пароль?</Link>
                     </div>
                 </form>
                 </div>
                 
                 <div className="card-footer text-center">
-                Нет аккаунта? {' '}
-                <a href="#!" className="text-decoration-none">Зарегистрируйтесь</a>
+                  Нет аккаунта? {' '}
+                  <Link to="/registration" className="text-decoration-none">Зарегистрироваться</Link>
                 </div>
             </div>
             </div>

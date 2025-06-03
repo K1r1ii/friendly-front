@@ -3,12 +3,12 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export const ProtectedRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { userData } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) navigate("/login");
-  }, [user]);
+    if (!userData) navigate("/login");
+  }, [userData]);
 
-  return user ? children : null;
+  return userData ? children : null;
 };
