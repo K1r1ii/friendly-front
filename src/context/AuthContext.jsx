@@ -11,7 +11,6 @@ export const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState(null); // Новое состояние для данных пользователя
   const [token, setToken] = useState(localStorage.getItem("token") || null);
   const [loading, setLoading] = useState(true); // Состояние загрузки
-  const baseUrl = import.meta.env.VITE_API_URL;
 
   // Функция для загрузки данных пользователя
   const fetchUserData = async () => {
@@ -71,7 +70,7 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.access_token}`;
       await fetchUserData(); // Загружаем данные после логина
     } catch (error) {
-      throw error.response.data;
+      throw error;
     }
   };
 

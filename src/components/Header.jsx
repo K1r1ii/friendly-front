@@ -80,6 +80,13 @@ export default function Header() {
                   >
                     News
                   </Link>
+                  <Link 
+                    to="/news/create_news" 
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    Create News
+                  </Link>
                   <div className="dropdown-divider"></div>
                   <button 
                     className="dropdown-item"

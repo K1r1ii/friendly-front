@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { newsAPI } from '../api/news';
+import { file_storageAPI } from '../api/file_storage';
 
 export default function CreateNews() {
   const navigate = useNavigate();
@@ -38,7 +38,8 @@ export default function CreateNews() {
       };
 
       if (image) {
-        data.append('image', image);
+        const image_data = await file_storageAPI.uploadFile(image);
+        data["attachments"] = [image_data.file_id];
       }
 
       await newsAPI.createNews(data);
@@ -56,18 +57,15 @@ export default function CreateNews() {
   return (
     <div className="container mt-4">
       <div className="row">
-        <div className="col-lg-8 mx-auto">
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h1 className="h3 mb-0">Создать новость</h1>
-            <Link to="/news" className="btn btn-outline-secondary">
-              <i className="bi bi-arrow-left me-1"></i>Назад
-            </Link>
+        <div className="col-lg-6 mx-auto">
+          <div className="d-flex justify-content-center">
+            <h1 className="profile-edit-title">Create News</h1>
           </div>
 
           {success && (
             <div className="alert alert-success alert-dismissible fade show" role="alert">
               <i className="bi bi-check-circle me-2"></i>
-              Новость успешно опубликована!
+              The news has been successfully published!
               <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           )}
@@ -83,11 +81,11 @@ export default function CreateNews() {
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             <div className="mb-3">
               <label htmlFor="topic" className="form-label">
-                Название <span className="text-danger">*</span>
+                Title <span className="text-danger">*</span>
               </label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control profile-input"
                 id="topic"
                 name="topic"
                 value={formData.topic}
@@ -99,13 +97,13 @@ export default function CreateNews() {
 
             <div className="mb-3">
               <label htmlFor="main_text" className="form-label">
-                Основной текст <span className="text-danger">*</span>
+                Text <span className="text-danger">*</span>
               </label>
               <textarea
                 className="form-control"
                 id="main_text"
                 name="main_text"
-                rows="8"
+                rows="5"
                 value={formData.main_text}
                 onChange={handleChange}
                 placeholder="Введите основной текст"
@@ -115,32 +113,40 @@ export default function CreateNews() {
 
             <div className="mb-3">
               <label htmlFor="image" className="form-label">
-                Фото (опционально)
+                Photo (optional)
               </label>
               <input
                 type="file"
-                className="form-control"
+                className="form-control profile-input"
                 id="image"
                 name="image"
                 accept="image/*"
                 onChange={(e) => setImage(e.target.files[0])}
               />
             </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Публикуется...
-                </>
-              ) : (
-                'Опубликовать'
-              )}
-            </button>
+            <div className="d-grid gap-2 d-md-flex justify-content-center">
+                <button
+                    type="submit"
+                    className="btn btn-primarybtn profile-save-button"
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <>
+                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Published...
+                        </>
+                    ) : (
+                        'Publish'
+                    )}
+                </button>
+                <button
+                    className="btn btn-danger ms-2"
+                    onClick={() => navigate("/profile")}
+                    type="button"
+                >
+                    Cancel
+                </button>
+            </div>
           </form>
         </div>
       </div>
