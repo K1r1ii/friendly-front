@@ -57,21 +57,28 @@ export default function Header() {
                     className="dropdown-item"
                     onClick={() => setIsDropdownOpen(false)}
                   >
-                    Профиль
+                    Profile
                   </Link>
                   <Link 
                     to="/" 
                     className="dropdown-item"
                     onClick={() => setIsDropdownOpen(false)}
                   >
-                    Главная
+                    Home
+                  </Link>
+                  <Link 
+                    to="/news" 
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    News
                   </Link>
                   <div className="dropdown-divider"></div>
                   <button 
                     className="dropdown-item"
                     onClick={handleLogout}
                   >
-                    Выход
+                    Logout
                   </button>
                 </div>
               )}

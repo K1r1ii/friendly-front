@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import Home from './pages/Home';
@@ -10,10 +10,9 @@ import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import News from "./pages/News";
 import Register from './pages/Registration';
+import CreateNews from './pages/CreateNews';
 
 function App() {
-  const userData = useAuth();
-
   return (
     <div className="d-flex flex-column min-vh-100">
       <AuthProvider >
@@ -45,6 +44,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <News />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/news/create_news"
+              element={
+                <ProtectedRoute>
+                  <CreateNews />
                 </ProtectedRoute>
               }
             />
