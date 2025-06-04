@@ -3,7 +3,9 @@ import { api } from "./axios";
 export const profileAPI = {
     getMyProfile: async () => {
         try {
-            const response = await api.get(`/profile/get_information`);
+            const response = await api.get(`/profile/get_information`, {
+                params: {t: Date.now()},
+              });
             return response.data;
         } catch (error) {
             throw error;
@@ -11,7 +13,9 @@ export const profileAPI = {
     },
     getUserProfile: async (userId) => {
         try {
-            const response = await api.get(`/profile/get_information?other_usr_id=${userId}`);
+            const response = await api.get(`/profile/get_information?other_usr_id=${userId}`, {
+                params: {t: Date.now()},
+            });
             return response.data;
         } catch (error) {
             throw error;

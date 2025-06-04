@@ -6,7 +6,7 @@ import { api } from "../api/axios";
 import { profileAPI } from "../api/profile";
 
 export default function EditProfile() {
-  const { userData } = useAuth();
+  const { userData, updateUserData, fetchUserData } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null); // Состояние для ошибки
 
@@ -26,8 +26,7 @@ export default function EditProfile() {
         last_name: userData.last_name || "",
         birthday: userData.birthday || "",
         nickname: userData.nickname || "",
-        sex: userData.sex || "",
-        email: userData.email || ""
+        sex: userData.sex || ""
       });
     }
   }, [userData]);
@@ -45,7 +44,8 @@ export default function EditProfile() {
     e.preventDefault();
     try {
       await profileAPI.updateProfile(formData);
-      window.location.href = "/profile";
+      await fetchUserData();
+      navigate("/profile");
     } catch (err) {
         const errorResponse = err.response;
 
@@ -63,11 +63,11 @@ export default function EditProfile() {
     }
   };
 
-  return (
-  <div className="container mt-5 mb-5">
+return (
+  <div className="container profile-form-wrapper">
     <div className="row justify-content-center">
       <div className="col-md-6">
-        <h2 className="mb-4 text-center">Edit Profile</h2>
+        <h2 className="profile-edit-title">Edit Profile</h2>
 
         <form onSubmit={handleSubmit}>
           {["first_name", "last_name", "birthday", "nickname", "sex"].map((field) => (
@@ -78,7 +78,7 @@ export default function EditProfile() {
                   .replace(/\b\w/g, (char) => char.toUpperCase())}
               </label>
               <input
-                className="form-control"
+                className="form-control profile-input"
                 name={field}
                 value={formData[field]}
                 onChange={handleChange}
@@ -94,15 +94,15 @@ export default function EditProfile() {
           )}
 
           <div className="d-grid gap-2 d-md-flex justify-content-center">
-            <button className="btn btn-success" type="submit">
-              Сохранить
+            <button className="btn profile-save-button" type="submit">
+              Save
             </button>
             <button
-              className="btn btn-secondary ms-2"
+              className="btn btn-danger ms-2"
               onClick={() => navigate("/profile")}
               type="button"
             >
-              Отмена
+              Cancel
             </button>
           </div>
         </form>

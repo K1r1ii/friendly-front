@@ -32,6 +32,7 @@ export default function Profile() {
           setLoading(false);
         }
       }
+
     };
 
     fetchOtherUser();
@@ -49,65 +50,88 @@ export default function Profile() {
   }
 
   // Функция для вычисления возраста
-    function calculateAge(birthday) {
-      const today = new Date();
-      const birthDate = new Date(birthday);
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (
-        monthDiff < 0 ||
-        (monthDiff === 0 && today.getDate() < birthDate.getDate())
-      ) {
-        age--;
-      }
-      return age;
+  function calculateAge(birthday) {
+    const today = new Date();
+    const birthDate = new Date(birthday);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  }
+
+  function getYearWord(age) {
+    const lastDigit = age % 10;
+    const lastTwoDigits = age % 100;
+
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+      return "лет";
     }
 
+    if (lastDigit === 1) {
+      return "год";
+    }
+
+    if (lastDigit >= 2 && lastDigit <= 4) {
+      return "года";
+    }
+
+    return "лет";
+  }
+
+  const age = calculateAge(dataToShow.birthday);
+
   const handleDeleteAccount = async () => {
-        try {
-            await profileAPI.deleteProfile();
-            logout();
-        } catch (err) {
-            console.error("Ошибка при удалении аккаунта:", err);
-            }
-        };
+    try {
+      await profileAPI.deleteProfile();
+      logout();
+    } catch (err) {
+      console.error("Ошибка при удалении аккаунта:", err);
+      }
+  };
 
 return (
   <div className="container mb-5">
     <div className="row justify-content-center mt-5">
-      <div className="col-md-7 col-lg-7"> {/* ← Ширина карточки */}
-        <div className="card shadow">
-          <div className="card-body">
+      <div className="col-md-7 col-lg-7">
+        <div className="card shadow-sm profile-card">
+          <div className="card-body profile-card-body">
             {/* Заголовок */}
             <div className="d-flex justify-content-center mb-4">
-              <h2 className="card-title text-center mb-0">
+              <h2 className="card-title text-center mb-0 profile-title">
                 {otherUserId ? `Profile ${dataToShow.nickname}` : "My Profile"}
               </h2>
             </div>
 
             {/* Аватар и информация */}
-            <div className="d-flex align-items-center mb-3">
+            <div className="d-flex align-items-center mb-3" style={{ marginBottom: "1.5rem" }}>
               <img
                 src={dataToShow.avatar || "/avatar.png"}
                 alt="Avatar"
-                className="rounded-circle me-3"
-                style={{ width: "120px", height: "120px" }}
+                className="profile-avatar"
               />
-              <div>
-                <h3 className="mb-1 fs-4">{dataToShow.first_name} {dataToShow.last_name}</h3>
+              <div className="profile-info-container">
+                <h3 className="mb-1 fs-4 profile-info-name">
+                  {dataToShow.first_name} {dataToShow.last_name}
+                </h3>
               </div>
             </div>
 
             {/* Информация */}
-            <ul className="list-group list-group-flush">
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                <span>Nickname</span>
-                <span>@{dataToShow.nickname}</span>
+            <ul className="list-group list-group-flush profile-list">
+              <li className="list-group-item profile-list-item">
+                <span className="profile-list-label">Nickname</span>
+                <span className="profile-list-value">@{dataToShow.nickname}</span>
               </li>
-              <li className="list-group-item d-flex justify-content-between align-items-center">
-                <span>Birthday</span>
-                <span>
-                  {new Date(dataToShow.birthday).toLocaleDateString("ru-RU")} ({calculateAge(dataToShow.birthday)} лет)
+              <li className="list-group-item profile-list-item">
+                <span className="profile-list-label">Birthday</span>
+                <span className="profile-list-value birthday">
+                  {new Date(dataToShow.birthday).toLocaleDateString("ru-RU")} (
+                  {age} {getYearWord(age)})
                 </span>
               </li>
             </ul>
@@ -121,10 +145,7 @@ return (
                 >
                   Edit profile
                 </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={handleDeleteAccount}
-                >
+                <button className="btn btn-danger" onClick={handleDeleteAccount}>
                   Delete account
                 </button>
               </div>

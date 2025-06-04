@@ -56,7 +56,7 @@ function App() {
               }
             />
           </Routes>
-          <Footer companyName='Freindly'/>
+          <Footer companyName='Friendly'/>
         </BrowserRouter>
       </AuthProvider>
     </div>
