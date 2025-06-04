@@ -1,6 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { profileAPI } from '../api/profile';
 
 export default function NewsItem({ news }) {
+    const [author, setAuthor] = useState([]);
+    const [loading, setLoading] = useState(true);
+    useEffect(() => {
+    const fetchAuthor = async () => {
+        try {
+            setLoading(true);
+            const author = await profileAPI.getUserProfile(news.owner_id);
+            setAuthor(author);
+        } catch (err) {
+            setError(err.message || 'Не удалось загрузить автора');
+            console.error('Ошибка загрузки автора:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+    fetchAuthor();
+    }, []);
+
     return (
     <div className="card mb-4 shadow-sm">
         <div className="card-body">
@@ -20,7 +39,7 @@ export default function NewsItem({ news }) {
                 width="32"
                 height="32"
             />
-            <small className="text-muted">ID автора: {news.owner_id}</small>
+            <small className="text-muted">Author: {author.firstName ? author.firstName : author.nickname}</small>
             </div>
         </div>
         </div>
