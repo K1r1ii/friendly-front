@@ -11,6 +11,8 @@ import EditProfile from "./pages/EditProfile";
 import News from "./pages/News";
 import Register from './pages/Registration';
 import CreateNews from './pages/CreateNews';
+import UserFeed from './pages/UserFeed';
+
 
 function App() {
   return (
@@ -47,6 +49,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute>
+                  <UserFeed />
+                </ProtectedRoute>
+              }
+            />
+            
             <Route
               path="/news/create_news"
               element={

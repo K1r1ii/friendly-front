@@ -67,6 +67,13 @@ export default function Header() {
                     Home
                   </Link>
                   <Link 
+                    to="/users" 
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    Users
+                  </Link>
+                  <Link 
                     to="/news" 
                     className="dropdown-item"
                     onClick={() => setIsDropdownOpen(false)}
