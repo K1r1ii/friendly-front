@@ -16,9 +16,11 @@ export const AuthProvider = ({ children }) => {
   // Функция для загрузки данных пользователя
   const fetchUserData = async () => {
     try {
-      const { data } = await api.get(`/profile/get_information`);
-      console.log(data);
+      const { data } = await api.get("/profile/get_information", {
+         params: {t: Date.now()},
+       });
       setUserData(data);
+      return data;
     } catch (error) {
       console.error("Ошибка загрузки данных пользователя:", error);
       logout();
