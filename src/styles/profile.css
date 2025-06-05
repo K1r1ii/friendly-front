@@ -106,3 +106,57 @@
   margin-bottom: 3rem;
 }
 
+.btn-orange {
+  background-color: #f18100; /* оранжевый */
+  border-color: #f18100;
+  color: white;
+}
+
+.btn-orange:hover {
+  background-color: #d77300; /* темнее при наведении */
+  border-color: #d77300;
+}
+
+.btn-orange:active{
+  background-color: #be6600 !important; /* ещё темнее при нажатии */
+  border-color: #be6600 !important;
+  box-shadow: none;
+}
+
+.btn-outline-orange {
+  color: #f18100;
+  background-color: transparent;
+  border: 1px solid #f18100;
+}
+
+.btn-outline-orange:hover {
+  color: white;
+  background-color: #d77300;
+  border-color: #d77300;
+}
+
+.btn-outline-orange:active {
+  color: white;
+  background-color: #be6600 !important;
+  border-color: #be6600 !important;
+  box-shadow: none;
+}
+
+.btn-add-friend {
+  background-color: #621ded; /* насыщенный фиолетовый */
+  border-color: #621ded;
+  color: white;
+}
+
+.btn-add-friend:hover {
+  background-color: #5812e5; /* темнее при наведении */
+  border-color: #5812e5;
+}
+
+.btn-add-friend:active {
+  background-color: #5111d2 !important; /* ещё темнее при нажатии */
+  border-color: #5111d2 !important;
+  box-shadow: none;
+}
+
+

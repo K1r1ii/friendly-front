@@ -98,7 +98,7 @@ return (
               Save
             </button>
             <button
-              className="btn btn-danger ms-2"
+              className="btn btn-danger "
               onClick={() => navigate("/profile")}
               type="button"
             >

@@ -8,7 +8,11 @@
 
 .friend-card:hover {
   transform: scale(1.015);
+<<<<<<< HEAD
+  box-shadow: 0 4px 7px rgba(255, 140, 0, 0.05); /* мягкая тень в цвете тёмного оранжевого */
+=======
   box-shadow: 0 6px 12px rgba(255, 140, 0, 0.15); /* мягкая тень в цвете тёмного оранжевого */
+>>>>>>> 4a0fab7ad94b954811625b572600449f426cb032
   background-image: linear-gradient(to right, #2e2150, #5e3ccf 40%, #d67a00 100%);
 }
 
@@ -31,10 +35,17 @@
   );
   color: #fff; /* белый текст */
   border: none;
+<<<<<<< HEAD
+  border-radius: 0.5rem;              /* чуть менее округлая */
+  padding: 0.35rem 0.9rem;            /* уменьшенные отступы */
+  font-weight: 600;
+  font-size: 0.9rem;
+=======
   border-radius: 0.75rem;
   padding: 0.5rem 1.25rem;
   font-weight: 600;
   font-size: 1rem;
+>>>>>>> 4a0fab7ad94b954811625b572600449f426cb032
   transition: background-image 0.3s ease, transform 0.2s ease;
   cursor: pointer;
   background-size: 200% 100%;
@@ -57,13 +68,114 @@
   cursor: default;
 }
 
+/* Панель с кнопкой удаления — по умолчанию скрыта */
+.remove-panel {
+  position: absolute;
+  right: -60px; /* скрыта за пределами карточки */
+  top: 0;
+  height: 100%;
+  width: 60px;
+  background: linear-gradient(to right, #7f71ff, #7a3ff0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: right 0.3s ease;
+  z-index: 2;
+  border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
 
+/* При наведении — выезжает */
+.friend-card:hover .remove-panel {
+  right: 0;
+}
 
+/* Кнопка-крестик */
+.remove-btn {
+  font-size: 2.4rem;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+}
 
+.remove-btn:hover {
+  #color: #ff066a;
+  color: #d67a00;
+  transform: scale(1.2);
+}
 
+.accept-btn {
+  font-size: 2.0rem;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+}
 
+.accept-btn:hover {
+  #color: #ff066a;
+  color: #d67a00;
+  transform: scale(1.2);
+}
 
+.friends-tabs-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
 
+/* Новая обертка для визуального выделения меню */
+.friends-tabs-panel {
+  background: rgba(255, 255, 255, 0.05); /* лёгкая полупрозрачность */
+  border-radius: 12px;
+  padding: 12px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* мягкая тень */
+  backdrop-filter: blur(6px); /* если фон полупрозрачный */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* легкая граница */
+}
 
+.friends-tabs {
+  display: flex;
+  gap: 40px;
+}
 
+.tab-button {
+  position: relative;
+  padding: 8px 16px;
+  cursor: pointer;
+  color: white;
+  font-weight: 500;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
 
+.tab-button::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: orange;
+  opacity: 0.6;
+}
+
+.tab-button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: transparent;
+  transition: background 0.3s ease;
+  z-index: 1;
+}
+
+.tab-button.active::after,
+.tab-button:hover::after {
+  background: linear-gradient(to right, orange, violet);
+}

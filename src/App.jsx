@@ -11,8 +11,8 @@ import EditProfile from "./pages/EditProfile";
 import News from "./pages/News";
 import Register from './pages/Registration';
 import CreateNews from './pages/CreateNews';
+import Friends from './pages/Friends';
 import UserFeed from './pages/UserFeed';
-
 
 function App() {
   return (
@@ -64,6 +64,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <CreateNews />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/friends"
+              element={
+                <ProtectedRoute>
+                  <Friends />
                 </ProtectedRoute>
               }
             />
