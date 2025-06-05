@@ -73,6 +73,14 @@ export default function Header() {
                   >
                     News
                   </Link>
+                  <Link
+                    to="/friends"
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    Friends
+                  </Link>
+
                   <div className="dropdown-divider"></div>
                   <button 
                     className="dropdown-item"

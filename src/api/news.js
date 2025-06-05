@@ -1,5 +1,5 @@
 import { api } from "./axios";
-import { friendsAPI } from "./friends";
+import { usersAPI } from "./users";
 
 export const newsAPI = {
     getMyNews: async () => {
@@ -20,7 +20,7 @@ export const newsAPI = {
     },
     getNews: async () => {
         try {
-            const friends = await friendsAPI.getMyFriends();
+            const friends = await usersAPI.getMyFriends();
             
             const newsPromises = friends.map(async (friend) => {
                 const userId = friend.friend_id;

@@ -33,7 +33,7 @@ export default function NewsItem({ news }) {
         <div className="d-flex justify-content-between align-items-center mt-4">
             <div className="d-flex align-items-center">
             <img 
-                src="/emblem_logo.png"
+                src="/avatar.png"
                 alt="Автор"
                 className="rounded-circle me-2"
                 width="32"
