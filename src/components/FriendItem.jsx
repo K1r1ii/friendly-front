@@ -26,7 +26,6 @@ export default function FriendItem({ user, tab }) {
   return (
     <div className="card mb-3 friend-card text-white border-0 friend-item">
       <div className="card-body d-flex align-items-center position-relative overflow-hidden">
-
         <img
           src="/avatar.png"
           alt="Аватар"
@@ -34,11 +33,10 @@ export default function FriendItem({ user, tab }) {
           width="64"
           height="64"
         />
-
-        <div style={{ flexGrow: 1 }}>
+        <div>
           <h5 className="mb-1">
             <Link
-              to={`/profile?other_usr_id=${user.friend_id}`}
+              to={`/profile?other_usr_id=${user.id}`}
               className="text-decoration-none friend-name"
             >
               {user.first_name} {user.last_name || ""}

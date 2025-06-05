@@ -9,8 +9,6 @@ export default function News() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchParams] = useSearchParams();
-  const user_id = searchParams.get('user_id');
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -35,7 +33,7 @@ export default function News() {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1 className="h3 mb-0">News feed</h1>
             {userData && (
-              <Link to="/create-news" className="btn btn-primary">
+              <Link to="/news/create-news" className="btn btn-primary">
                 <i className="bi bi-plus-lg me-1"></i>add news
               </Link>
             )}
@@ -77,7 +75,7 @@ export default function News() {
           ) : (
             <div>
               {news.map(item => (
-                <NewsItem key={item.news_id} news={item} />
+                <NewsItem key={item.post_body.news_id} news={item} />
               ))}
             </div>
           )}

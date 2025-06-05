@@ -67,6 +67,13 @@ export default function Header() {
                     Home
                   </Link>
                   <Link 
+                    to="/users" 
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    Users
+                  </Link>
+                  <Link 
                     to="/news" 
                     className="dropdown-item"
                     onClick={() => setIsDropdownOpen(false)}
@@ -80,7 +87,13 @@ export default function Header() {
                   >
                     Friends
                   </Link>
-
+                  <Link 
+                    to="/news/create_news" 
+                    className="dropdown-item"
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    Create News
+                  </Link>
                   <div className="dropdown-divider"></div>
                   <button 
                     className="dropdown-item"
