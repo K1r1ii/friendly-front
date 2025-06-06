@@ -6,6 +6,7 @@ import { api } from "../api/axios";
 import { profileAPI } from "../api/profile";
 import { usersAPI } from "../api/users";
 import axios from "axios";
+import News from "./News";
 
 
 export default function Profile() {
@@ -239,6 +240,7 @@ return (
             </div>
           </div>
         </div>
+        <News userId={otherUserId ? otherUserId : userData.id}/>
       </div>
     </div>
   );

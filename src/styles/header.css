@@ -1,0 +1,8 @@
+/* Кастомный класс для оранжевого фона при наведении */
+.hover-bg-orange {
+    transition: background-color 0.3s ease;
+}
+.hover-bg-orange:hover {
+    background-color: #fd7e14 !important; /* Оранжевый цвет Bootstrap (orange-600) */
+    color: white !important;
+}

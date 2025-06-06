@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { profileAPI } from '../api/profile';
 import { newsAPI } from '../api/news';
-
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // Импортируем AuthContext
 
 function formatDateTime(dateString) {
   if (!dateString) return '';
@@ -12,18 +12,24 @@ function formatDateTime(dateString) {
   return format(date, 'HH:mm dd.MM.yyyy');
 }
 
-export default function NewsItem({ news }) {
+export default function NewsItem({ news, onNewsDeleted }) {
   const [author, setAuthor] = useState({});
   const [image, setImage] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [reactionLoading, setReactionLoading] = useState(false);
-
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  
   // Локальное состояние для реакции "LIKE"
   const [likeState, setLikeState] = useState({
     count: 0,
     isLiked: false,
   });
+  
+  // Получаем данные текущего пользователя
+  const { userData } = useAuth();
+  const isAuthor = news?.post_body?.owner_id === userData?.id;
 
   useEffect(() => {
     const fetchAuthor = async () => {
@@ -56,7 +62,6 @@ export default function NewsItem({ news }) {
       count: 0,
       reacted_by_user: false,
     };
-
     setLikeState({
       count: reaction.count,
       isLiked: reaction.reacted_by_user,
@@ -67,30 +72,49 @@ export default function NewsItem({ news }) {
   }, [news]);
 
   const handleAddReaction = async (reactionType) => {
-    setReactionLoading(true);
-
+    if (likeState.isLiked || reactionLoading) return;
+    // setReactionLoading(true);
+  
     const prevIsLiked = likeState.isLiked;
     const prevCount = likeState.count;
-
-    // Обновляем UI сразу
-    setLikeState(prev => ({
-      count: prev.isLiked ? prev.count - 1 : prev.count + 1,
-      isLiked: !prev.isLiked,
-    }));
-
+  
+    setLikeState({
+      count: prevCount + 1,
+      isLiked: true,
+    });
+  
     try {
       await newsAPI.addReaction(news.post_body.news_id, reactionType);
     } catch (err) {
-      // Откатываем изменения при ошибке
       setLikeState({
         count: prevCount,
         isLiked: prevIsLiked,
       });
-
+  
       setError(err.message || 'Не удалось обновить реакцию');
       console.error('Ошибка добавления реакции:', err);
     } finally {
-      setReactionLoading(false);
+    }
+  };
+  const handleDeleteNews = async () => {
+    if (!window.confirm('Вы уверены, что хотите удалить этот пост?')) {
+      return;
+    }
+
+    setDeleteLoading(true);
+    setDeleteError(null);
+
+    try {
+      await newsAPI.deleteNews(news.post_body.news_id);
+      
+      if (onNewsDeleted) {
+        onNewsDeleted(news.post_body.news_id);
+      }
+    } catch (err) {
+      setDeleteError(err.message || 'Не удалось удалить пост');
+      console.error('Ошибка удаления поста:', err);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -100,6 +124,20 @@ export default function NewsItem({ news }) {
 
   return (
     <div className="card mb-4 shadow-sm">
+      {/* Блок с ошибкой удаления */}
+      {deleteError && (
+        <div className="alert alert-danger alert-dismissible fade show m-3" role="alert">
+          <i className="bi bi-exclamation-triangle me-2"></i>
+          {deleteError}
+          <button 
+            type="button" 
+            className="btn-close" 
+            onClick={() => setDeleteError(null)}
+            aria-label="Close"
+          ></button>
+        </div>
+      )}
+      
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="card-title mb-0">{news.post_body.topic}</h5>
@@ -135,26 +173,46 @@ export default function NewsItem({ news }) {
                 @{author.firstName ? author.firstName : author.nickname}
               </small>
             </Link>
-
           </div>
 
-          {/* Кнопка с реакцией и количеством */}
-          <button
-            className={`btn btn-sm d-flex align-items-center gap-1 ${
-              likeState.isLiked ? 'btn-danger' : 'btn-outline-danger'
-            }`}
-            onClick={() => handleAddReaction('LIKE')}
-            disabled={reactionLoading}
-          >
-            {reactionLoading ? (
-              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            ) : (
-              <>
-                <span>❤️</span>
-                {likeState.count > 0 && <span>{likeState.count}</span>}
-              </>
+          <div className="d-flex align-items-center gap-2">
+            {/* Кнопка с реакцией и количеством */}
+            <button
+              className={`btn d-flex align-items-center gap-1 ${
+                likeState.isLiked ? 'btn-dark' : 'btn-outline-dark'
+              }`}
+              onClick={() => handleAddReaction("LIKE")}
+            >
+              {reactionLoading ? (
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              ) : (
+                <>
+                    {/* Условный рендеринг символа сердечка */}
+                    {likeState.isLiked ? <img src="https://img.icons8.com/?size=30&id=7697&format=png&color=f24444" /> : <img src="https://img.icons8.com/?size=30&id=87&format=png&color=ffffff"/>}
+
+                  {/* Отображаем количество лайков, если оно больше 0 */}
+                  {likeState.count > 0 && (
+                    <span style={{ color: '#f24444' }}>{likeState.count}</span>
+                  )}
+                </>
+              )}
+            </button>
+            {/* Кнопка удаления (отображается только автору) */}
+            {isAuthor && (
+              <button
+                className="btn btn-outline-danger"
+                onClick={handleDeleteNews}
+                disabled={deleteLoading}
+                title="Удалить пост"
+              >
+                {deleteLoading ? (
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                ) : (
+                  <span>Delete</span>
+                )}
+              </button>
             )}
-          </button>
+          </div>
         </div>
       </div>
     </div>

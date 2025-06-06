@@ -24,7 +24,7 @@ const onAccept = async (userId) => {
 
 export default function FriendItem({ user, tab }) {
   return (
-    <div className="card mb-3 friend-card text-white border-0 friend-item">
+    <div className="card mb-3 friend-card text-white border-0 friend-card">
       <div className="card-body d-flex align-items-center position-relative overflow-hidden">
         <img
           src="/avatar.png"
@@ -36,7 +36,7 @@ export default function FriendItem({ user, tab }) {
         <div>
           <h5 className="mb-1">
             <Link
-              to={`/profile?other_usr_id=${user.id}`}
+              to={`/profile?other_usr_id=${tab ? (tab === "requests" ? user.sender_id : user.friend_id) : user.id}`}
               className="text-decoration-none friend-name"
             >
               {user.first_name} {user.last_name || ""}
