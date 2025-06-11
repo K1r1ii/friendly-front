@@ -1,4 +1,7 @@
 import 'bootswatch/dist/darkly/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+import  './styles/header.css';
 import './styles/profile.css';
 import './styles/friend.css';
 import { StrictMode } from 'react'

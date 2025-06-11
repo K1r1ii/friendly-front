@@ -50,6 +50,9 @@ export default function CreateNews() {
       }, 1500);
     } catch (err) {
       setError(err.message || 'Не удалось опубликовать новость');
+      // err.response.data.detail.map((one_err) => {
+      //   console.log(one_err.msg);
+      // })
     } finally {
       setLoading(false);
     }

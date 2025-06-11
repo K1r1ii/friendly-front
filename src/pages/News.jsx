@@ -4,17 +4,25 @@ import { Link, useSearchParams } from 'react-router-dom';
 import NewsItem from '../components/NewsItem';
 import { newsAPI } from '../api/news';
 
-export default function News() {
+export default function News({ userId }) {
   const { userData } = useAuth();
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const handleNewsDeleted = (newsId) => {
+    setNews(prevNews => prevNews.filter(item => item.post_body.news_id !== newsId));
+  };
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        const newsData = await newsAPI.getNews();
+        let newsData;
+        if (typeof userId === "undefined") {
+          newsData = await newsAPI.getNews();
+        } else {
+          newsData = await newsAPI.getUserNews(userId);
+        }
         setNews(newsData);
       } catch (err) {
         setError(err.message || 'Не удалось загрузить новости');
@@ -31,7 +39,7 @@ export default function News() {
       <div className="row">
         <div className="col-lg-8 mx-auto">
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h1 className="h3 mb-0">News feed</h1>
+            <h1 className="h3 mb-0">News</h1>
             {userData && (
               <Link to="/news/create_news" className="btn btn-primary">
                 <i className="bi bi-plus-lg me-1"></i>add news
@@ -75,7 +83,7 @@ export default function News() {
           ) : (
             <div>
               {news.map(item => (
-                <NewsItem key={item.post_body.news_id} news={item} />
+                <NewsItem key={item.post_body.news_id} news={item} onNewsDeleted={handleNewsDeleted} />
               ))}
             </div>
           )}

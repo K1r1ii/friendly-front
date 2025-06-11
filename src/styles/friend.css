@@ -120,7 +120,7 @@
 }
 
 .accept-btn:hover {
-  #color: #ff066a;
+  /* color: #ff066a; */
   color: #d67a00;
   transform: scale(1.2);
 }

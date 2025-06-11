@@ -60,7 +60,7 @@ function App() {
             />
             
             <Route
-              path="/news/create_news"
+              path="/news/create-news"
               element={
                 <ProtectedRoute>
                   <CreateNews />

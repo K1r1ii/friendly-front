@@ -9,6 +9,7 @@ import calculateAge from "../utils/profile";
 import updateSearchParams from "../utils/navigation";
 import ProfileCard from "../components/ProfileCard";
 import axios from "axios";
+import News from "./News";
 
 
 export default function Profile() {
@@ -104,20 +105,21 @@ export default function Profile() {
     const age = calculateAge(dataToShow.birthday);
 
 return (
-  <div className="container mb-5">
-    <div className="row justify-content-center mt-5">
-      <div className="col-md-7 col-lg-7">
-        <ProfileCard
-          dataToShow={dataToShow}
-          otherUserId={otherUserId}
-          age={age}
-          isFriend={isFriend}
-          loading={loading}
-          handleAddFriend={handleAddFriend}
-          handleRemoveFriend={handleRemoveFriend}
-//           handleBanUser={handleBanUser}
-          handleDeleteAccount={handleDeleteAccount}
-        />
+    <div className="container mb-5">
+        <div className="row justify-content-center mt-5">
+          <div className="col-md-7 col-lg-7">
+            <ProfileCard
+              dataToShow={dataToShow}
+              otherUserId={otherUserId}
+              age={age}
+              isFriend={isFriend}
+              loading={loading}
+              handleAddFriend={handleAddFriend}
+              handleRemoveFriend={handleRemoveFriend}
+    //           handleBanUser={handleBanUser}
+              handleDeleteAccount={handleDeleteAccount}
+            />
+        <News userId={otherUserId ? otherUserId : userData.id}/>
       </div>
     </div>
   </div>
