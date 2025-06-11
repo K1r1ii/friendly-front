@@ -39,6 +39,7 @@ export const  usersAPI = {
             throw error;
         }
     },
+
     addFriend: async (friendId) => {
         try {
             const response = await api.post(`/users/friend/add/${friendId}`);
@@ -47,6 +48,7 @@ export const  usersAPI = {
             throw error;
         }
     },
+
     banUser: async (userId) => {
         try {
             const response = await api.put(`/users/ban_user/${userId}`);
@@ -58,7 +60,7 @@ export const  usersAPI = {
 
     getFriendRequests: async (offset=0, limit=10) => {
         try {
-            const response = await api.get(`/users/friend/incoming_friend_requests`, {
+            const response = await api.get(`/users/friend/incoming_friend_requests?offset=${offset}&limit=${limit}`, {
               params: {t: Date.now()},
             });
             return response.data;
@@ -74,5 +76,51 @@ export const  usersAPI = {
         } catch (error) {
             throw error;
         }
+    },
+
+    getAllMyFriends: async () => {
+      let limit = 49;
+      let i = 0;
+      let allFriends = [];
+
+      let friends = await usersAPI.getMyFriends(i, limit + 1);
+      let friendsArray = Object.values(friends);
+      allFriends.push(...friendsArray);
+
+      while (friendsArray.length > limit) {
+        i++;
+        friends = await usersAPI.getMyFriends(i, limit + 1);
+        friendsArray = Object.values(friends);
+        allFriends.push(...friendsArray);
+      }
+
+      return allFriends;
+    },
+
+    isUserFriend: async (otherUserId) => {
+      const allFriends = await usersAPI.getAllMyFriends();
+      const friendIds = new Set(allFriends.map(friend => friend.friend_id));
+      return friendIds.has(otherUserId);
+    },
+
+    countUserFriends: async (otherUserId) => {
+        const allFriends = await usersAPI.getAllMyFriends();
+        return allFriends.length;
+    },
+    
+    countRequestsFriend: async () => {
+        let limit = 49;
+        let i = 0;
+        let friends = await usersAPI.getFriendRequests(i, limit+1);
+        let friendsArray = Object.values(friends);
+        let res = friendsArray.length;
+
+        while (friendsArray.length > limit){
+             i++;
+             friends = await usersAPI.getFriendRequests(i, limit+1);
+             friendsArray = Object.values(friends);
+             res += friendsArray.length;
+        }
+        return res;
     }
 };

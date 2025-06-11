@@ -33,7 +33,7 @@ export default function News() {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1 className="h3 mb-0">News feed</h1>
             {userData && (
-              <Link to="/news/create-news" className="btn btn-primary">
+              <Link to="/news/create_news" className="btn btn-primary">
                 <i className="bi bi-plus-lg me-1"></i>add news
               </Link>
             )}
@@ -67,7 +67,7 @@ export default function News() {
                 <p className="card-text">
                   Be the first to share the news!
                 </p>
-                <Link to="/create-news" className="btn btn-primary mt-2">
+                <Link to="/news/create_news" className="btn btn-primary mt-2">
                   Create news
                 </Link>
               </div>
