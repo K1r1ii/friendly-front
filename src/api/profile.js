@@ -11,6 +11,7 @@ export const profileAPI = {
             throw error;
         }
     },
+
     getUserProfile: async (userId) => {
         try {
             const response = await api.get(`/profile/get_information?other_usr_id=${userId}`, {
@@ -21,6 +22,7 @@ export const profileAPI = {
             throw error;
         }
     },
+
     updateProfile: async (data) => {
         try {
             const response = await api.patch("/profile/update_information", data);

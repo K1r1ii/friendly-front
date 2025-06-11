@@ -23,7 +23,7 @@ export default function Login() {
     <div className="container">
         <div className="row justify-content-center mt-5">
             <div className="col-md-6 col-lg-4">
-            <div className="card shadow">
+            <div className="card shadow mb-4">
                 <div className="card-body">
                 <h2 className="card-title text-center mb-4">Вход в систему</h2>
                 
