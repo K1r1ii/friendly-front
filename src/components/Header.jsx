@@ -15,7 +15,6 @@ export default function Header() {
   const authLinks = [
     { to: '/profile', label: 'Profile' },
     { to: '/friends', label: 'Friends' },
-    { to: '/', label: 'Home' },
     { to: '/users', label: 'Users' },
     { to: '/news', label: 'News' },
     { to: '/news/create-news', label: 'Create News' },
@@ -29,7 +28,7 @@ export default function Header() {
   return (
     <nav className="navbar navbar-expand-lg navbar-custom py-2">
       <div className="container-fluid position-relative d-flex align-items-center">
-        <Link className="navbar-brand text-white fs-3 fw-bold fst-italic" to="/">
+        <Link className="navbar-brand text-white fs-3 fw-bold fst-italic" to="/" onClick={() => setMenuOpen(false)}>
           Friendly
         </Link>
 

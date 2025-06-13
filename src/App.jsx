@@ -44,7 +44,14 @@ function AppContent() {
       <Header />
       <ErrorHandler />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <News />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path='/registration' element={<Register />} />
         <Route
