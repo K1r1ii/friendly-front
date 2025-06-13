@@ -5,7 +5,6 @@ import { ErrorProvider, useError } from './context/ErrorContext';
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
-import Home from './pages/Home';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Login from "./pages/Login";

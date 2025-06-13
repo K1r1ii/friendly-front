@@ -1,3 +1,2 @@
 node_modules
 dist  # Папка сборки Vite
-.env
