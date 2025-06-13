@@ -3,6 +3,8 @@ import axios from 'axios';
 import UserItem from '../components/UserItem';
 import { usersAPI } from "../api/users";
 import { useAuth } from "../context/AuthContext";
+import { useError } from "../context/ErrorContext";
+import handleApiErrors from "../utils/handleApiErrors";
 
 function UserFeed() {
   const [users, setUsers] = useState([]);
@@ -10,6 +12,7 @@ function UserFeed() {
   const [loading, setLoading] = useState(true);
   const { userData } = useAuth();
   const [friendIds, setFriendIds] = useState(new Set());
+  const { setErrorCode, setErrorMessage } = useError();
 
   useEffect(() => {
     usersAPI.getUserFeedList()
@@ -21,9 +24,8 @@ function UserFeed() {
         setError("Invalid response format");
     }
   })
-      .catch((error) => {
-        console.error("Error fetching user feed:", error);
-        setError("Failed to load user feed");
+      .catch((err) => {
+        handleApiError(err, setErrorCode, setErrorMessage);
       })
       .finally(() => {
         setLoading(false); // обязательно
@@ -56,7 +58,7 @@ function UserFeed() {
   return (
     <div className="container my-5">
       <h2 className="text-center mb-4 profile-edit-title">Users List</h2>
-      <div className="list-group shadow-sm rounded">
+      <div className="list-group">
       {users
         .filter(user => user.id !== userData.id)
         .map(user => (

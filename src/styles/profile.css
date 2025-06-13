@@ -177,5 +177,21 @@
   box-shadow: none;
 }
 
+.delete-transition-btn {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
+.delete-btn-cancel {
+  opacity: 0;
+  animation: delete-fadeIn 0.3s forwards;
+}
 
+.delete-btn-cancel:hover {
+  color: white;
+}
+
+@keyframes delete-fadeIn {
+  to {
+    opacity: 1;
+  }
+}

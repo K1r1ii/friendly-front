@@ -8,14 +8,24 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     try {
       await login({ email, password });
       navigate("/");
-    } catch (error) {
-      console.error("Login failed:", error);
+    } catch (err) {
+       if (err?.response?.status === 422){
+          const errorMessage = err.response.data.detail[0].msg;
+          setError(errorMessage);
+       }
+
+       if (err?.response?.status === 401){
+           const errorMessage = err.response.data.detail;
+           setError(errorMessage);
+       }
     }
   };
 
@@ -25,7 +35,13 @@ export default function Login() {
             <div className="col-md-6 col-lg-4">
             <div className="card shadow mb-4">
                 <div className="card-body">
-                <h2 className="card-title text-center mb-4">Вход в систему</h2>
+                <h2 className="card-title text-center mb-4">Log in</h2>
+
+                {error && (
+                    <div className="alert alert-danger mb-4">
+                      <strong>Error!</strong> {error}
+                    </div>
+                )}
                 
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3">
@@ -41,9 +57,9 @@ export default function Login() {
                     </div>
 
                     <div className="mb-4">
-                    <label htmlFor="password" className="form-label">Пароль</label>
+                    <label htmlFor="password" className="form-label">Password</label>
                     <input 
-                        type="password" 
+                        type="password"
                         className="form-control"
                         id="password"
                         value={password}
@@ -56,18 +72,18 @@ export default function Login() {
                     type="submit" 
                     className="btn btn-primary w-100 mb-3"
                     >
-                    Войти
+                    Log in
                     </button>
 
-                    <div className="text-center">
-                    <Link to="#!" className="text-decoration-none">Забыли пароль?</Link>
-                    </div>
+{/*                     <div className="text-center"> */}
+{/*                     <Link to="#!" className="text-decoration-none">Забыли пароль?</Link> */}
+{/*                     </div> */}
                 </form>
                 </div>
                 
                 <div className="card-footer text-center">
-                  Нет аккаунта? {' '}
-                  <Link to="/registration" className="text-decoration-none">Зарегистрироваться</Link>
+                  New to Friendly? {' '}
+                  <Link to="/registration" className="text-decoration-none">Register</Link>
                 </div>
             </div>
             </div>

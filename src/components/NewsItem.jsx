@@ -3,7 +3,8 @@ import { profileAPI } from '../api/profile';
 import { newsAPI } from '../api/news';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Импортируем AuthContext
+import { useAuth } from '../context/AuthContext';
+import { useError } from "../context/ErrorContext";
 
 function formatDateTime(dateString) {
   if (!dateString) return '';
@@ -16,10 +17,9 @@ export default function NewsItem({ news, onNewsDeleted }) {
   const [author, setAuthor] = useState({});
   const [image, setImage] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [reactionLoading, setReactionLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteError, setDeleteError] = useState(null);
+  const { setErrorCode, setErrorMessage } = useError();
   
   // Локальное состояние для реакции "LIKE"
   const [likeState, setLikeState] = useState({
@@ -38,8 +38,7 @@ export default function NewsItem({ news, onNewsDeleted }) {
         const authorData = await profileAPI.getUserProfile(news.post_body.owner_id);
         setAuthor(authorData);
       } catch (err) {
-        setError(err.message || 'Не удалось загрузить автора');
-        console.error('Ошибка загрузки автора:', err);
+        handleApiErrors(err, setErrorCode, setErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -52,8 +51,7 @@ export default function NewsItem({ news, onNewsDeleted }) {
           setImage(imageUrl);
         }
       } catch (err) {
-        setError(err.message || 'Не удалось загрузить фото');
-        console.error('Ошибка загрузки фото:', err);
+        handleApiErrors(err, setErrorCode, setErrorMessage);
       }
     };
 
@@ -91,8 +89,7 @@ export default function NewsItem({ news, onNewsDeleted }) {
         isLiked: prevIsLiked,
       });
   
-      setError(err.message || 'Не удалось обновить реакцию');
-      console.error('Ошибка добавления реакции:', err);
+      handleApiErrors(err, setErrorCode, setErrorMessage);
     } finally {
     }
   };
@@ -102,7 +99,6 @@ export default function NewsItem({ news, onNewsDeleted }) {
     }
 
     setDeleteLoading(true);
-    setDeleteError(null);
 
     try {
       await newsAPI.deleteNews(news.post_body.news_id);
@@ -111,8 +107,7 @@ export default function NewsItem({ news, onNewsDeleted }) {
         onNewsDeleted(news.post_body.news_id);
       }
     } catch (err) {
-      setDeleteError(err.message || 'Не удалось удалить пост');
-      console.error('Ошибка удаления поста:', err);
+      handleApiErrors(err, setErrorCode, setErrorMessage);
     } finally {
       setDeleteLoading(false);
     }
@@ -125,18 +120,6 @@ export default function NewsItem({ news, onNewsDeleted }) {
   return (
     <div className="card mb-4 shadow-sm">
       {/* Блок с ошибкой удаления */}
-      {deleteError && (
-        <div className="alert alert-danger alert-dismissible fade show m-3" role="alert">
-          <i className="bi bi-exclamation-triangle me-2"></i>
-          {deleteError}
-          <button 
-            type="button" 
-            className="btn-close" 
-            onClick={() => setDeleteError(null)}
-            aria-label="Close"
-          ></button>
-        </div>
-      )}
       
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-3">

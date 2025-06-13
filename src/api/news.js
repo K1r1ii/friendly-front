@@ -10,9 +10,8 @@ export const newsAPI = {
       const response = await api.get(`/news/feed/list`);
       return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
-      console.error('Ошибка при получении моих новостей:', error.message);
-      return [];
-    }
+          throw error;
+      }
   },
 
   /**
@@ -52,9 +51,8 @@ export const newsAPI = {
       return results.filter(news => news !== null);
 
     } catch (error) {
-      console.error(`Ошибка при получении новостей пользователя ${userId}:`, error.message);
-      return [];
-    }
+          throw error;
+      }
   },
 
   /**
@@ -70,9 +68,8 @@ export const newsAPI = {
       const response = await api.get(`/news/feed/${news_id}`);
       return response.data || null;
     } catch (error) {
-      console.error(`Ошибка при загрузке полной новости ${news_id}:`, error.message);
-      return null;
-    }
+          throw error;
+      }
   },
 
   /**
@@ -113,9 +110,8 @@ export const newsAPI = {
       return sortedAllNews;
 
     } catch (error) {
-      console.error('Ошибка при получении новостей:', error.message);
-      return [];
-    }
+          throw error;
+      }
   },
 
   /**
@@ -126,7 +122,6 @@ export const newsAPI = {
       const response = await api.post(`/news/produce_content`, data);
       return response.data;
     } catch (error) {
-      console.error('Ошибка при создании новости:', error.message);
       throw error;
     }
   },
@@ -144,7 +139,6 @@ export const newsAPI = {
       const response = await api.post(`/news/add_reaction/${news_id}?reaction_type=${reaction_type}`);
       return response.data;
     } catch (error) {
-      console.error(`Ошибка при добавлении реакции к новости ${news_id}:`, error.message);
       throw error;
     }
   },

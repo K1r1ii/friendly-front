@@ -1,36 +1,46 @@
 import { useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useError } from "../context/ErrorContext";
 import { useNavigate } from "react-router-dom";
-import { api } from "../api/axios";
 import { profileAPI } from "../api/profile";
 import { usersAPI } from "../api/users";
 import calculateAge from "../utils/profile";
 import updateSearchParams from "../utils/navigation";
 import ProfileCard from "../components/ProfileCard";
-import axios from "axios";
 import News from "./News";
-
+import handleApiErrors from "../utils/handleApiErrors";
 
 export default function Profile() {
   const location = useLocation();
-  const { userData, logout } = useAuth(); // Текущий пользователь
+  const { userData, logout } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryParams = new URLSearchParams(location.search);
   const paramsId = queryParams.get("other_usr_id");
-  const otherUserId = (paramsId === userData.id ? null : paramsId) ;
+  const otherUserId = (paramsId === userData.id ? null : paramsId);
   const navigate = useNavigate();
+  const { setErrorCode, setErrorMessage } = useError();
 
   const [otherUserData, setOtherUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
 
-  // Если указан другой пользователь — загружаем его
+  // Новые состояния для success сообщений
+  const [friendSuccessMessage, setFriendSuccessMessage] = useState("");
+
+  useEffect(() => {
+    if (friendSuccessMessage) {
+      const timer = setTimeout(() => setFriendSuccessMessage(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [friendSuccessMessage]);
+
   useEffect(() => {
     const fetchOtherUser = async () => {
-      setSearchParams(updateSearchParams({
-          other_usr_id: otherUserId
-      }, userData.id), { replace: true });
+      setSearchParams(
+        updateSearchParams({ other_usr_id: otherUserId }, userData.id),
+        { replace: true }
+      );
 
       if (otherUserId) {
         setLoading(true);
@@ -39,9 +49,10 @@ export default function Profile() {
           const userIsFriend = await usersAPI.isUserFriend(otherUserId);
           setIsFriend(userIsFriend);
           setOtherUserData(data);
-        } catch (error) {
-          console.error("Ошибка при получении профиля другого пользователя:", error);
+        } catch (err) {
+          handleApiErrors(err, setErrorCode, setErrorMessage);
           setOtherUserData(null);
+          setLoading(false);
         } finally {
           setLoading(false);
         }
@@ -58,70 +69,69 @@ export default function Profile() {
       await profileAPI.deleteProfile();
       logout();
     } catch (err) {
-      console.error("Ошибка при удалении аккаунта:", err);
-      }
+      handleApiErrors(err, setErrorCode, setErrorMessage);
+    }
   };
 
   const handleAddFriend = async () => {
-      try {
-        await usersAPI.addFriend(otherUserId);
-      } catch (error) {
-        console.error("Ошибка при добавлении в друзья:", error);
-      } finally {
-      }
-    };
-
-    const handleRemoveFriend = async () => {
-      try {
-        await usersAPI.removeFriend(otherUserId);
-        setIsFriend(false);
-      } catch (error) {
-        console.error("Ошибка при удалении из друзей:", error);
-      } finally {
-      }
-    };
-
-//     const handleBanUser = async () => {
-//       try {
-//         setLoading(true);
-//         await usersAPI.banUser(otherUserId);
-//         setIsFriend(false);
-//       } catch (error) {
-//         console.error("Ошибка при бане пользователя:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-    if (!dataToShow || loading) {
-        return (
-          <div className="container mt-5 text-center">
-            <div className="spinner-border text-primary" role="status"></div>
-            <p>Загрузка профиля...</p>
-          </div>
-        );
+    try {
+      await usersAPI.addFriend(otherUserId);
+      setFriendSuccessMessage("Friend added");
+    } catch (err) {
+      handleApiErrors(err, setErrorCode, setErrorMessage);
     }
+  };
 
-    const age = calculateAge(dataToShow.birthday);
+  const handleRemoveFriend = async () => {
+    try {
+      await usersAPI.removeFriend(otherUserId);
+      setIsFriend(false);
+      setFriendSuccessMessage("Friend deleted");
+    } catch (err) {
+      handleApiErrors(err, setErrorCode, setErrorMessage);
+    }
+  };
 
-return (
+  if (!dataToShow || loading) {
+    return (
+      <div className="container mt-5 text-center">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p>Загрузка профиля...</p>
+      </div>
+    );
+  }
+
+  const age = calculateAge(dataToShow.birthday);
+
+  return (
     <div className="container mb-5">
-        <div className="row justify-content-center mt-5">
-          <div className="col-md-7 col-lg-7">
-            <ProfileCard
-              dataToShow={dataToShow}
-              otherUserId={otherUserId}
-              age={age}
-              isFriend={isFriend}
-              loading={loading}
-              handleAddFriend={handleAddFriend}
-              handleRemoveFriend={handleRemoveFriend}
-    //           handleBanUser={handleBanUser}
-              handleDeleteAccount={handleDeleteAccount}
-            />
-        <News userId={otherUserId ? otherUserId : userData.id}/>
+      <div className="row justify-content-center mt-5">
+        <div className="col-md-7 col-lg-7">
+          {/* Сообщение успеха сверху */}
+          {friendSuccessMessage && (
+            <div
+              className="alert alert-success text-center"
+              style={{ borderRadius: "12px", marginBottom: "1rem" }}
+              role="alert"
+            >
+              {friendSuccessMessage}
+            </div>
+          )}
+
+          <ProfileCard
+            dataToShow={dataToShow}
+            otherUserId={otherUserId}
+            age={age}
+            isFriend={isFriend}
+            loading={loading}
+            handleAddFriend={handleAddFriend}
+            handleRemoveFriend={handleRemoveFriend}
+            handleDeleteAccount={handleDeleteAccount}
+          />
+
+          <News userId={otherUserId ? otherUserId : userData.id} />
+        </div>
       </div>
     </div>
-  </div>
-);
-};
+  );
+}

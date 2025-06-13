@@ -1,7 +1,6 @@
 import React from "react";
-import "../styles/edit_form.css"; // Подключаем стили
 
-export default function EditProfileForm({ formData, error, onChange, onSubmit, onCancel }) {
+export default function EditProfileForm({ formData, error, success, onChange, onSubmit, onCancel }) {
   return (
     <form onSubmit={onSubmit}>
       {["first_name", "last_name", "nickname"].map((field) => (
@@ -63,6 +62,8 @@ export default function EditProfileForm({ formData, error, onChange, onSubmit, o
           <strong>Error!</strong> {error}
         </div>
       )}
+
+      {success && (<div className="alert alert-success mb-4" role="alert">{success}</div>)}
 
       <div className="d-grid gap-2 d-md-flex justify-content-center">
         <button className="btn profile-save-button" type="submit">

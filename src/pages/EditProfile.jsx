@@ -1,13 +1,17 @@
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useError } from "../context/ErrorContext";
 import { profileAPI } from "../api/profile";
 import EditProfileForm from "../components/EditProfileForm";
+import handleApiErrors from "../utils/handleApiErrors";
 
 export default function EditProfile() {
   const { userData, updateUserData, fetchUserData } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const { setErrorCode, setErrorMessage } = useError();
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -42,20 +46,23 @@ export default function EditProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     try {
       await profileAPI.updateProfile(formData);
       await fetchUserData();
-      navigate("/profile");
+      setSuccess("Profile updated successfully! Redirecting...");
+
+      setTimeout(() => {
+        navigate("/profile");
+      }, 1300);
     } catch (err) {
-      const errorResponse = err.response;
-      let errorMessage = "Unknown error!";
-      if (errorResponse) {
-        console.error("Ошибка от сервера:", errorResponse.data);
-        errorMessage = errorResponse.data?.detail?.[0]?.msg || errorMessage;
+      setSuccess(null);
+      if (err?.response?.status === 422) {
+        const errorMessage = err.response.data.detail[0].msg;
+        setError(errorMessage);
       } else {
-        console.error("Ошибка без ответа от сервера:", err.message);
+        handleApiErrors(err, setErrorCode, setErrorMessage, false);
       }
-      setError(errorMessage);
     }
   };
 
@@ -64,12 +71,15 @@ export default function EditProfile() {
       <div className="row justify-content-center">
         <div className="col-md-6">
           <h2 className="profile-edit-title">Edit Profile</h2>
+
           <EditProfileForm
             formData={formData}
             error={error}
+            success={success}
             onChange={handleChange}
             onSubmit={handleSubmit}
             onCancel={() => navigate("/profile")}
+            disabled={success} // можно добавить проп для блокировки формы, если надо
           />
         </div>
       </div>
