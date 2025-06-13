@@ -31,7 +31,7 @@ export default function UserListWithPagination({
 
   if (users.length === 0) {
     return (
-      <div className="card shadow text-center py-5">
+      <div className="card shadow text-center py-5 mb-4">
         <div className="card-body">
           <i className={`bi ${emptyIcon} display-1 text-muted mb-4`} />
           <h3 className="card-title">{emptyTitle}</h3>

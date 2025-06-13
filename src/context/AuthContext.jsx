@@ -55,9 +55,8 @@ export const AuthProvider = ({ children }) => {
   const register = async (credentials) => {
     try {
       const { data } = await api.post(`/auth/registration`, {email: credentials.email, password: credentials.password});
-      console.log("Успешно!")
     } catch (error) {
-      throw error.response.data;
+      throw error;
     }
   };
   const login = async (credentials) => {

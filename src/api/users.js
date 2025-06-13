@@ -79,36 +79,49 @@ export const  usersAPI = {
     },
 
     getAllMyFriends: async () => {
-      let limit = 49;
-      let i = 0;
-      let allFriends = [];
+        try {
+          let limit = 49;
+          let i = 0;
+          let allFriends = [];
 
-      let friends = await usersAPI.getMyFriends(i, limit + 1);
-      let friendsArray = Object.values(friends);
-      allFriends.push(...friendsArray);
+          let friends = await usersAPI.getMyFriends(i, limit + 1);
+          let friendsArray = Object.values(friends);
+          allFriends.push(...friendsArray);
 
-      while (friendsArray.length > limit) {
-        i++;
-        friends = await usersAPI.getMyFriends(i, limit + 1);
-        friendsArray = Object.values(friends);
-        allFriends.push(...friendsArray);
-      }
+          while (friendsArray.length > limit) {
+            i++;
+            friends = await usersAPI.getMyFriends(i, limit + 1);
+            friendsArray = Object.values(friends);
+            allFriends.push(...friendsArray);
+          }
 
-      return allFriends;
+          return allFriends;
+          } catch (error) {
+              throw error;
+          }
     },
 
     isUserFriend: async (otherUserId) => {
+      try {
       const allFriends = await usersAPI.getAllMyFriends();
       const friendIds = new Set(allFriends.map(friend => friend.friend_id));
       return friendIds.has(otherUserId);
+      } catch (error) {
+          throw error;
+      }
     },
 
     countUserFriends: async (otherUserId) => {
+        try {
         const allFriends = await usersAPI.getAllMyFriends();
         return allFriends.length;
+        } catch (error) {
+            throw error;
+        }
     },
     
     countRequestsFriend: async () => {
+        try {
         let limit = 49;
         let i = 0;
         let friends = await usersAPI.getFriendRequests(i, limit+1);
@@ -122,5 +135,8 @@ export const  usersAPI = {
              res += friendsArray.length;
         }
         return res;
+        } catch (error) {
+            throw error;
+        }
     }
 };

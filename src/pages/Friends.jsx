@@ -3,23 +3,25 @@ import { useSearchParams } from "react-router-dom";
 import { usersAPI } from "../api/users";
 import UserItem from "../components/UserItem";
 import { useAuth } from "../context/AuthContext";
+import { useError } from "../context/ErrorContext";
 import FriendsTabs from "../components/FriendsTabs";
 import UserListWithPagination from "../components/UserListWithPagination";
 import updateSearchParams from "../utils/navigation";
+import handleApiErrors from "../utils/handleApiErrors";
 
 export default function Friends() {
   const { userData } = useAuth();
+  const { setErrorCode, setErrorMessage } = useError();
   const [searchParams, setSearchParams] = useSearchParams();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(false);
 
   const paramsUserId = searchParams.get("whose_friends_usr_id")
   const whose_friends_usr_id = paramsUserId === userData.id ? null : paramsUserId;
   const tab = searchParams.get("tab") || "friends";
-  const LIMIT = 2;
+  const LIMIT = 10;
   const offset = parseInt(searchParams.get("offset") || "0", 10) * LIMIT;
 
   const handleEmptyPage = async (getCountFn) => {
@@ -37,11 +39,10 @@ export default function Friends() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        setError(null);
 
         setSearchParams(updateSearchParams({
             whose_friends_usr_id,
-            offset,
+            offset: offset/LIMIT,
             tab,
           }, userData.id), { replace: true });
 
@@ -74,8 +75,7 @@ export default function Friends() {
           setHasMore(response.length > LIMIT);
         }
       } catch (err) {
-        setError(err.message || "Ошибка загрузки");
-        console.error("Ошибка:", err);
+            handleApiErrors(err, setErrorCode, setErrorMessage);
       } finally {
         setLoading(false);
       }
@@ -116,7 +116,7 @@ const fetchNextUser = async (listType) => {
     setHasMore(nextCheck.length > 0);
 
   } catch (err) {
-    console.error("Ошибка при подгрузке следующего пользователя:", err);
+    handleApiErrors(err, setErrorCode, setErrorMessage);
   }
 };
 
@@ -138,7 +138,7 @@ const handleRemove = async (userId) => {
     }
 
   } catch (err) {
-    console.error("Ошибка при удалении из друзей:", err);
+    handleApiErrors(err, setErrorCode, setErrorMessage);
   }
 };
 
@@ -159,25 +159,9 @@ const handleAccept = async (userId) => {
         }));
     }
   } catch (err) {
-    console.error("Ошибка при принятии заявки в друзья:", err);
+      handleApiErrors(err, setErrorCode, setErrorMessage);
   }
 };
-
-
-if (error) {
-  return (
-    <div className="container mt-4">
-      <div className="row justify-content-center">
-        <div className="col-lg-10">
-          <div className="alert alert-danger">
-            <i className="bi bi-exclamation-triangle me-2" />
-            {error}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 if (loading) {
   return (
