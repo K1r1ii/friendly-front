@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("firebaseRegistered");
     setToken(null);
     setTokenData(null);
     setUserData(null); // Очищаем данные при выходе
