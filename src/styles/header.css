@@ -1,0 +1,157 @@
+.navbar-custom {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    #feda75 0%,
+    #fa7e1e 25%,
+    #d62976 50%,
+    #962fbf 75%,
+    #4f5bd5 100%
+  );
+}
+
+/* Бургер-кнопка без теней и бордеров */
+
+.navbar-toggler:focus,
+.navbar-toggler:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.navbar-toggler {
+  width: 30px;
+  height: 24px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  z-index: 3;
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: transform 0.3s ease, top 0.3s ease, opacity 0.1s ease;
+}
+
+/* Расположение полос в обычном состоянии */
+.top-bar {
+  top: 0;
+}
+.middle-bar {
+  top: 10px;
+}
+.bottom-bar {
+  top: 20px;
+}
+
+/* Когда открыто: превращаем в крестик */
+.navbar-toggler.open .top-bar {
+  top: 10px;
+  transform: rotate(45deg);
+}
+.navbar-toggler.open .middle-bar {
+  opacity: 0;
+}
+.navbar-toggler.open .bottom-bar {
+  top: 10px;
+  transform: rotate(-45deg);
+}
+
+/* Логотип */
+.navbar-brand {
+  z-index: 2;
+}
+
+/* Центрированные пункты */
+.center-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  z-index: 1;
+}
+
+/* Ссылки */
+.nav-link-custom {
+  color: white;
+  text-decoration: none;
+  position: relative;
+  padding: 0.25rem 0;
+  font-weight: 565;
+  transition: transform 0.3s ease;
+}
+
+/* Подчёркивание — толще и плавное */
+.nav-link-custom::after {
+  content: '';
+  position: absolute;
+  height: 1.5px; /* стало толще */
+  background-color: white;
+  left: 50%;
+  bottom: -2px;
+  width: 0;
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.nav-link-custom:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+.nav-link-custom:hover{
+  transform: scale(1.1);
+  color:
+}
+
+/* Правая часть */
+.right-nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-left: auto;
+  z-index: 2;
+}
+
+/* Мобильное меню */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    padding-top: 1rem;
+  }
+
+  .navbar-collapse .navbar-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .navbar-collapse .nav-item {
+    width: auto;
+  }
+
+  .navbar-collapse .nav-link-custom {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    width: auto;
+    text-align: center;
+  }
+
+  .navbar-collapse .nav-link-custom:last-child {
+    border-bottom: none;
+  }
+}

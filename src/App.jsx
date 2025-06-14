@@ -9,8 +9,10 @@ import { listenToForegroundMessages } from "./api/firebase";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { requestPermissionAndToken } from "./api/firebase";
 import { notifyAPI } from "./api/notify";
+import { ErrorProvider, useError } from './context/ErrorContext';
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
-import Home from './pages/Home';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Login from "./pages/Login";
@@ -21,6 +23,8 @@ import Register from './pages/Registration';
 import CreateNews from './pages/CreateNews';
 import Friends from './pages/Friends';
 import UserFeed from './pages/UserFeed';
+import NotFound from './pages/Errors/NotFound';
+import ErrorHandler from "./components/ErrorHandler";
 
 // 🔹 Вспомогательный компонент с логикой
 const AppContent = () => {
@@ -66,6 +70,26 @@ const AppContent = () => {
      initNotifications();;
   }, [addNotification, userData, firebaseRegistered]);              //Если не будет работать убрать из квадратный скобок
 
+function AppContent() {
+  const { errorCode, setErrorCode } = useError();
+  const location = useLocation();
+
+    useEffect(() => {
+      if (errorCode) {
+        setErrorCode(null);
+      }
+    }, [location.pathname]);
+
+  if (errorCode) {
+    return (
+      <>
+        <Header />
+        <ErrorHandler />
+        <Footer companyName="Friendly" />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
@@ -74,6 +98,18 @@ const AppContent = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/registration" element={<Register />} />
 
+      <ErrorHandler />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <News />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/login" element={<Login />} />
+        <Route path='/registration' element={<Register />} />
         <Route
           path="/profile"
           element={
@@ -110,15 +146,16 @@ const AppContent = () => {
           }
         />
 
+        //<Route
+        //  path="/news/create_news"                   //Смотря какой надо
         <Route
-          path="/news/create_news"
+          path="/news/create-news"
           element={
             <ProtectedRoute>
               <CreateNews />
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/friends"
           element={
@@ -127,11 +164,13 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer companyName="Friendly" />
     </>
   );
 };
+}
 
 function App() {
   return (
@@ -142,6 +181,11 @@ function App() {
             <AppContent />
           </NotificationProvider>
         </BrowserRouter>
+        <ErrorProvider>
+          <BrowserRouter>
+            <AppContent />
+          </BrowserRouter>
+        </ErrorProvider>
       </AuthProvider>
     </div>
   );

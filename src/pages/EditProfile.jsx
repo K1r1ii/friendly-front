@@ -1,14 +1,17 @@
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { api } from "../api/axios";
+import { useError } from "../context/ErrorContext";
 import { profileAPI } from "../api/profile";
+import EditProfileForm from "../components/EditProfileForm";
+import handleApiErrors from "../utils/handleApiErrors";
 
 export default function EditProfile() {
   const { userData, updateUserData, fetchUserData } = useAuth();
   const navigate = useNavigate();
-  const [error, setError] = useState(null); // Состояние для ошибки
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const { setErrorCode, setErrorMessage } = useError();
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -16,7 +19,7 @@ export default function EditProfile() {
     birthday: "",
     nickname: "",
     sex: "",
-    email: ""
+    email: "",
   });
 
   useEffect(() => {
@@ -26,88 +29,60 @@ export default function EditProfile() {
         last_name: userData.last_name || "",
         birthday: userData.birthday || "",
         nickname: userData.nickname || "",
-        sex: userData.sex || ""
+        sex: userData.sex || "",
+        email: userData.email || "",
       });
     }
   }, [userData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     if (error) setError(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     try {
       await profileAPI.updateProfile(formData);
       await fetchUserData();
-      navigate("/profile");
+      setSuccess("Profile updated successfully! Redirecting...");
+
+      setTimeout(() => {
+        navigate("/profile");
+      }, 1300);
     } catch (err) {
-        const errorResponse = err.response;
-
-        let errorMessage = "Unknown error!";
-
-        if (errorResponse) {
-          console.error("Ошибка от сервера:", errorResponse.data);
-
-          errorMessage = errorResponse.data["detail"][0]["msg"] || errorMessage;
-        } else {
-          console.error("Ошибка без ответа от сервера:", err.message);
-        }
-
+      setSuccess(null);
+      if (err?.response?.status === 422) {
+        const errorMessage = err.response.data.detail[0].msg;
         setError(errorMessage);
+      } else {
+        handleApiErrors(err, setErrorCode, setErrorMessage, false);
+      }
     }
   };
 
-return (
-  <div className="container profile-form-wrapper">
-    <div className="row justify-content-center">
-      <div className="col-md-6">
-        <h2 className="profile-edit-title">Edit Profile</h2>
+  return (
+    <div className="container profile-form-wrapper">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <h2 className="profile-edit-title">Edit Profile</h2>
 
-        <form onSubmit={handleSubmit}>
-          {["first_name", "last_name", "birthday", "nickname", "sex"].map((field) => (
-            <div className="mb-3" key={field}>
-              <label className="form-label">
-                {field
-                  .replace(/_/g, " ")
-                  .replace(/\b\w/g, (char) => char.toUpperCase())}
-              </label>
-              <input
-                className="form-control profile-input"
-                name={field}
-                value={formData[field]}
-                onChange={handleChange}
-                placeholder={`Введите ${field.replace("_", " ")}`}
-              />
-            </div>
-          ))}
-
-          {error && (
-            <div className="alert alert-danger mb-4">
-              <strong>Error!</strong> {error}
-            </div>
-          )}
-
-          <div className="d-grid gap-2 d-md-flex justify-content-center">
-            <button className="btn profile-save-button" type="submit">
-              Save
-            </button>
-            <button
-              className="btn btn-danger "
-              onClick={() => navigate("/profile")}
-              type="button"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+          <EditProfileForm
+            formData={formData}
+            error={error}
+            success={success}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+            onCancel={() => navigate("/profile")}
+            disabled={success} // можно добавить проп для блокировки формы, если надо
+          />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }

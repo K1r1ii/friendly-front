@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { newsAPI } from '../api/news';
 import { file_storageAPI } from '../api/file_storage';
+import handleApiErrors from "../utils/handleApiErrors";
+import { useError } from "../context/ErrorContext";
 
 export default function CreateNews() {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ export default function CreateNews() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const { setErrorCode, setErrorMessage } = useError();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,13 +52,19 @@ export default function CreateNews() {
         navigate('/news');
       }, 1500);
     } catch (err) {
-      setError(err.message || 'Не удалось опубликовать новость');
+      if (err?.response?.status === 422){
+          const errorMessage = err.response.data.detail[0].msg;
+          setError(errorMessage);
+        }
+        else {
+          handleApiErrors(err, setErrorCode, setErrorMessage, handle422=false);
+      }
     } finally {
       setLoading(false);
     }
   };
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 mb-4">
       <div className="row">
         <div className="col-lg-6 mx-auto">
           <div className="d-flex justify-content-center">
