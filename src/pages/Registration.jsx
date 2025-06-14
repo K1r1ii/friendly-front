@@ -36,7 +36,7 @@ export default function Register() {
   return (
     <div className="register-page">
       <div className="register-container">
-        <div className="register-card">
+        <div className="register-card mt-4 mb-4">
           <div className="register-header">
             <h2>Registration</h2>
           </div>

@@ -32,7 +32,7 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-container">
-        <div className="login-card">
+        <div className="login-card mt-4 mb-4">
           <div className="login-header">
             <h2>Log in</h2>
           </div>
