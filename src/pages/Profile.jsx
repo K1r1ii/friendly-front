@@ -25,6 +25,7 @@ export default function Profile() {
   const [otherUserData, setOtherUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
+  const [sendInvite, setSendInvite] = useState(false);
 
   // Новые состояния для success сообщений
   const [friendSuccessMessage, setFriendSuccessMessage] = useState("");
@@ -51,7 +52,7 @@ export default function Profile() {
           setIsFriend(userIsFriend);
           setOtherUserData(data);
         } catch (err) {
-          handleApiErrors(err, setErrorCode, setErrorMessage);
+          handleApiErrors(err, setErrorCode, setErrorMessage, false);
           setOtherUserData(null);
           setLoading(false);
         } finally {
@@ -78,6 +79,7 @@ export default function Profile() {
     try {
       await usersAPI.addFriend(otherUserId);
       setFriendSuccessMessage("Friend added");
+      setSendInvite(true);
     } catch (err) {
       handleApiErrors(err, setErrorCode, setErrorMessage);
     }
@@ -114,39 +116,39 @@ export default function Profile() {
   const age = calculateAge(dataToShow.birthday);
 
   return (
-    <div className="container mb-5">
-      <div className="row justify-content-center mt-5">
-        <div className="col-md-7 col-lg-7">
-          {/* Сообщение успеха сверху */}
-          {friendSuccessMessage && (
-            <div
-              className="alert alert-success text-center"
-              style={{ borderRadius: "12px", marginBottom: "1rem" }}
-              role="alert"
-            >
-              {friendSuccessMessage}
-            </div>
-          )}
+    <>
+      <div className="container mb-5">
+        <div className="row justify-content-center mt-5">
+          <div className="col-md-7 col-lg-7">
+            {/* Сообщение успеха сверху */}
+            {friendSuccessMessage && (
+              <div
+                className="alert alert-success text-center"
+                style={{ borderRadius: "12px", marginBottom: "1rem" }}
+                role="alert"
+              >
+                {friendSuccessMessage}
+              </div>
+            )}
 
-          <ProfileCard
-            dataToShow={dataToShow}
-            otherUserId={otherUserId}
-            age={age}
-            isFriend={isFriend}
-            sendInvite={sendInvite}
-            loading={loading}
-            handleAddFriend={handleAddFriend}
-            handleRemoveFriend={handleRemoveFriend}
-            handleDeleteAccount={handleDeleteAccount}
-          />
+            <ProfileCard
+              dataToShow={dataToShow}
+              otherUserId={otherUserId}
+              age={age}
+              isFriend={isFriend}
+              sendInvite={sendInvite}
+              loading={loading}
+              handleAddFriend={handleAddFriend}
+              handleRemoveFriend={handleRemoveFriend}
+              handleDeleteAccount={handleDeleteAccount}
+            />
+          </div>
         </div>
       </div>
-
-      {/* News вне колонки — будет на всю ширину контейнера */}
       <News
-        key={otherUserId ? otherUserId : userData.id}
-        userId={otherUserId ? otherUserId : userData.id}
+          key={otherUserId ? otherUserId : userData.id}
+          userId={otherUserId ? otherUserId : userData.id}
       />
-    </div>
+    </>
   );
 }

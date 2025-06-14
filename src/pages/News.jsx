@@ -63,7 +63,7 @@ export default function News({ userId }) {
                 <p className="card-text">
                   Be the first to share the news!
                 </p>
-                <Link to="/news/create-news" className="btn-add-news">
+                <Link to="/news/create-news" className="btn btn-primary mt-2">
                   Create news
                 </Link>
               </div>

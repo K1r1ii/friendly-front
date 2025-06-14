@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import { NotificationProvider } from "./context/NotificationContext"; // или .jsx — зависит от расширения
-// ✅ Добавь этот импорт:
+import { NotificationProvider } from "./context/NotificationContext";
 import { useNotifications } from "./context/NotificationContext";
 import { listenToForegroundMessages } from "./api/firebase";
 
@@ -11,7 +10,6 @@ import { requestPermissionAndToken } from "./api/firebase";
 import { notifyAPI } from "./api/notify";
 import { ErrorProvider, useError } from './context/ErrorContext';
 import { useLocation } from "react-router-dom";
-//import { useEffect } from "react";
 
 import Header from './components/Header';
 import Footer from './components/Footer';

@@ -6,6 +6,7 @@ export default function ProfileCard({
   otherUserId,
   age,
   isFriend,
+  sendInvite,
   loading,
   handleAddFriend,
   handleRemoveFriend,
@@ -88,7 +89,7 @@ export default function ProfileCard({
 
               {/* Кнопки удаления аккаунта и отмены без отдельного div */}
               <button
-                className={`btn btn-outline-danger delete-transition-btn`}
+                className={`btn btn-outline-danger delete-transition-btn mt-4`}
                 onClick={handleDeleteAccountClick}
                 disabled={loading}
               >
@@ -110,7 +111,7 @@ export default function ProfileCard({
             (isFriend ? (
               <>
                 <button
-                  className={`btn btn-outline-danger delete-transition-btn`}
+                  className={`btn btn-outline-danger delete-transition-btn mt-4`}
                   onClick={handleRemoveFriendClick}
                   disabled={loading}
                 >
@@ -127,9 +128,10 @@ export default function ProfileCard({
                 )}
               </>
             ) : (
-              <button className="btn btn-add-friend" onClick={handleAddFriend} disabled={loading}>
-                Add friend
-              </button>
+               !sendInvite && (
+               <button className="btn btn-add-friend" onClick={handleAddFriend} disabled={loading}>
+                 Add friend
+               </button>)
             ))}
         </div>
       </div>

@@ -57,7 +57,7 @@ export default function CreateNews() {
           setError(errorMessage);
         }
         else {
-          handleApiErrors(err, setErrorCode, setErrorMessage, handle422=false);
+          handleApiErrors(err, setErrorCode, setErrorMessage, false);
       }
     } finally {
       setLoading(false);
@@ -75,7 +75,6 @@ export default function CreateNews() {
             <div className="alert alert-success alert-dismissible fade show" role="alert">
               <i className="bi bi-check-circle me-2"></i>
               The news has been successfully published!
-              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           )}
 
@@ -83,7 +82,6 @@ export default function CreateNews() {
             <div className="alert alert-danger alert-dismissible fade show" role="alert">
               <i className="bi bi-exclamation-triangle me-2"></i>
               {error}
-              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
           )}
 
@@ -149,7 +147,7 @@ export default function CreateNews() {
                     )}
                 </button>
                 <button
-                    className="btn btn-danger ms-2"
+                    className="btn btn-danger"
                     onClick={() => navigate("/profile")}
                     type="button"
                 >
