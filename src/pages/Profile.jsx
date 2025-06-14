@@ -7,9 +7,10 @@ import { profileAPI } from "../api/profile";
 import { usersAPI } from "../api/users";
 import calculateAge from "../utils/profile";
 import updateSearchParams from "../utils/navigation";
+import handleApiErrors from "../utils/handleApiErrors";
+
 import ProfileCard from "../components/ProfileCard";
 import News from "./News";
-import handleApiErrors from "../utils/handleApiErrors";
 
 export default function Profile() {
   const location = useLocation();
@@ -17,7 +18,7 @@ export default function Profile() {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryParams = new URLSearchParams(location.search);
   const paramsId = queryParams.get("other_usr_id");
-  const otherUserId = (paramsId === userData.id ? null : paramsId);
+  const otherUserId = paramsId === userData.id ? null : paramsId;
   const navigate = useNavigate();
   const { setErrorCode, setErrorMessage } = useError();
 

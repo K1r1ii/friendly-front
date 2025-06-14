@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { useNotifications } from '../context/NotificationContext';
 
 export default function Header() {
   const { userData, logout } = useAuth();
+  const { notifications, markAsRead, clearNotifications } = useNotifications();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [notificationsDropdownOpen, setNotificationsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -25,14 +29,40 @@ export default function Header() {
     { to: '/registration', label: 'Registration' },
   ];
 
+  const notifDropdown = () => {
+    setNotificationsDropdownOpen(!notificationsDropdownOpen);
+    console.log('Колокольчик нажали, текущее состояние:', notificationsDropdownOpen);
+  };
+
+  const onNotificationClick = (id) => {
+    markAsRead(id);
+    setNotificationsDropdownOpen(false);
+    navigate("/friends?tab=requests");
+  };
+
+  const onClearAll = () => {
+    clearNotifications();
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-custom py-2">
+    <nav
+      className="navbar navbar-expand-lg py-1 position-relative"
+      style={{
+        background:
+          'linear-gradient(135deg, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%)',
+      }}
+    >
       <div className="container-fluid position-relative d-flex align-items-center">
+        {/* Логотип */}
         <Link className="navbar-brand text-white fs-3 fw-bold fst-italic" to="/" onClick={() => setMenuOpen(false)}>
           Friendly
         </Link>
 
-        {/* Анимированная бургер-кнопка */}
+        {/* Бургер-меню */}
         <button
           className={`navbar-toggler border-0 d-lg-none ${menuOpen ? 'open' : ''}`}
           type="button"
@@ -44,16 +74,16 @@ export default function Header() {
           <span className="bar bottom-bar"></span>
         </button>
 
+        {/* Меню для десктопа и мобильное меню */}
         <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`} id="navbarNav">
-          {userData && (
-            <div className="center-nav d-none d-lg-flex">
-              {authLinks.map((item) => (
-                <Link key={item.to} to={item.to} className="nav-link-custom">
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          )}
+          {/* Десктоп навигация */}
+          <div className="center-nav d-none d-lg-flex ms-auto me-auto">
+            {authLinks.map((item) => (
+              <Link key={item.to} to={item.to} className="nav-link-custom mx-2">
+                {item.label}
+              </Link>
+            ))}
+          </div>
 
           <div className="right-nav d-none d-lg-flex">
             {userData ? (
@@ -62,7 +92,7 @@ export default function Header() {
               </Link>
             ) : (
               guestLinks.map((item) => (
-                <Link key={item.to} to={item.to} className="nav-link-custom">
+                <Link key={item.to} to={item.to} className="nav-link-custom mx-2">
                   {item.label}
                 </Link>
               ))
@@ -70,7 +100,7 @@ export default function Header() {
           </div>
 
           {/* Мобильное меню */}
-          <ul className="navbar-nav d-lg-none w-100">
+          <ul className="navbar-nav d-lg-none w-100 mt-3">
             {userData ? (
               <>
                 {authLinks.map((item) => (

@@ -1,11 +1,16 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from "./context/AuthContext";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { NotificationProvider } from "./context/NotificationContext";
+import { useNotifications } from "./context/NotificationContext";
+import { listenToForegroundMessages } from "./api/firebase";
+
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { requestPermissionAndToken } from "./api/firebase";
+import { notifyAPI } from "./api/notify";
 import { ErrorProvider, useError } from './context/ErrorContext';
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
 
-// import Home from './pages/Home';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Login from "./pages/Login";
@@ -19,6 +24,7 @@ import UserFeed from './pages/UserFeed';
 import NotFound from './pages/Errors/NotFound';
 import ErrorHandler from "./components/ErrorHandler";
 
+
 function AppContent() {
   const { errorCode, setErrorCode } = useError();
   const location = useLocation();
@@ -28,6 +34,48 @@ function AppContent() {
         setErrorCode(null);
       }
     }, [location.pathname]);
+
+    
+  const { userData } = useAuth(); // ✅ Правильно — внутри функционального компонента
+  const { addNotification, loadNotifications } = useNotifications(); // ✅ Также верно
+  const [firebaseRegistered, setFirebaseRegistered] = React.useState(
+    () => localStorage.getItem("firebaseRegistered") === "true"
+  );
+
+  useEffect(() => {
+    if (userData) {
+      loadNotifications();
+    }
+  }, [userData]);
+
+
+  useEffect(() => {
+      const initNotifications = async () => {
+        if (!userData || firebaseRegistered) return;
+
+       const token = await requestPermissionAndToken();
+       if (token) {
+         try {
+           const response = await notifyAPI.connectToFirebase(token);
+           console.log("✅ Токен отправлен на сервер:", response);
+          // помечаем, что регистрация прошла
+           localStorage.setItem("firebaseRegistered", "true");
+           localStorage.getItem("firebaseRegistered");
+           setFirebaseRegistered(true);
+           listenToForegroundMessages(addNotification);
+         } catch (error) {
+           if (error.response?.data?.detail?.includes("already stored")) {
+            localStorage.setItem("firebaseRegistered", "true");
+            setFirebaseRegistered(true);
+            listenToForegroundMessages(addNotification);
+          } else {
+            console.error("Ошибка отправки токена:", error.message);
+           }
+         }
+       }
+     };
+     initNotifications();;
+  }, [addNotification, userData, firebaseRegistered]);
 
   if (errorCode) {
     return (
@@ -114,9 +162,11 @@ function App() {
     <div className="d-flex flex-column min-vh-100">
       <AuthProvider>
         <ErrorProvider>
-          <BrowserRouter>
-            <AppContent />
-          </BrowserRouter>
+          <NotificationProvider>
+            <BrowserRouter>
+              <AppContent />
+            </BrowserRouter>
+          </NotificationProvider>
         </ErrorProvider>
       </AuthProvider>
     </div>
