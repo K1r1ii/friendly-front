@@ -7,9 +7,10 @@ import { profileAPI } from "../api/profile";
 import { usersAPI } from "../api/users";
 import calculateAge from "../utils/profile";
 import updateSearchParams from "../utils/navigation";
+import handleApiErrors from "../utils/handleApiErrors";
+
 import ProfileCard from "../components/ProfileCard";
 import News from "./News";
-import handleApiErrors from "../utils/handleApiErrors";
 
 export default function Profile() {
   const location = useLocation();
@@ -17,13 +18,14 @@ export default function Profile() {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryParams = new URLSearchParams(location.search);
   const paramsId = queryParams.get("other_usr_id");
-  const otherUserId = (paramsId === userData.id ? null : paramsId);
+  const otherUserId = paramsId === userData.id ? null : paramsId;
   const navigate = useNavigate();
   const { setErrorCode, setErrorMessage } = useError();
 
   const [otherUserData, setOtherUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
+  const [sendInvite, setSendInvite] = useState(false);
 
   // Новые состояния для success сообщений
   const [friendSuccessMessage, setFriendSuccessMessage] = useState("");
@@ -50,7 +52,7 @@ export default function Profile() {
           setIsFriend(userIsFriend);
           setOtherUserData(data);
         } catch (err) {
-          handleApiErrors(err, setErrorCode, setErrorMessage);
+          handleApiErrors(err, setErrorCode, setErrorMessage, false);
           setOtherUserData(null);
           setLoading(false);
         } finally {
@@ -77,6 +79,7 @@ export default function Profile() {
     try {
       await usersAPI.addFriend(otherUserId);
       setFriendSuccessMessage("Friend added");
+      setSendInvite(true);
     } catch (err) {
       handleApiErrors(err, setErrorCode, setErrorMessage);
     }
@@ -104,6 +107,7 @@ export default function Profile() {
   const age = calculateAge(dataToShow.birthday);
 
   return (
+  <>
     <div className="container mb-5">
       <div className="row justify-content-center mt-5">
         <div className="col-md-7 col-lg-7">
@@ -123,15 +127,16 @@ export default function Profile() {
             otherUserId={otherUserId}
             age={age}
             isFriend={isFriend}
+            sendInvite={sendInvite}
             loading={loading}
             handleAddFriend={handleAddFriend}
             handleRemoveFriend={handleRemoveFriend}
             handleDeleteAccount={handleDeleteAccount}
           />
-
-          <News userId={otherUserId ? otherUserId : userData.id} />
         </div>
       </div>
     </div>
+  <News key={otherUserId ? otherUserId : userData.id} userId={otherUserId ? otherUserId : userData.id} />
+  </>
   );
 }

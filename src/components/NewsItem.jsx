@@ -20,13 +20,13 @@ export default function NewsItem({ news, onNewsDeleted }) {
   const [reactionLoading, setReactionLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { setErrorCode, setErrorMessage } = useError();
-  
+
   // Локальное состояние для реакции "LIKE"
   const [likeState, setLikeState] = useState({
     count: 0,
     isLiked: false,
   });
-  
+
   // Получаем данные текущего пользователя
   const { userData } = useAuth();
   const isAuthor = news?.post_body?.owner_id === userData?.id;
@@ -72,15 +72,15 @@ export default function NewsItem({ news, onNewsDeleted }) {
   const handleAddReaction = async (reactionType) => {
     if (likeState.isLiked || reactionLoading) return;
     // setReactionLoading(true);
-  
+
     const prevIsLiked = likeState.isLiked;
     const prevCount = likeState.count;
-  
+
     setLikeState({
       count: prevCount + 1,
       isLiked: true,
     });
-  
+
     try {
       await newsAPI.addReaction(news.post_body.news_id, reactionType);
     } catch (err) {
@@ -88,7 +88,7 @@ export default function NewsItem({ news, onNewsDeleted }) {
         count: prevCount,
         isLiked: prevIsLiked,
       });
-  
+
       handleApiErrors(err, setErrorCode, setErrorMessage);
     } finally {
     }
@@ -102,7 +102,7 @@ export default function NewsItem({ news, onNewsDeleted }) {
 
     try {
       await newsAPI.deleteNews(news.post_body.news_id);
-      
+
       if (onNewsDeleted) {
         onNewsDeleted(news.post_body.news_id);
       }
@@ -120,7 +120,7 @@ export default function NewsItem({ news, onNewsDeleted }) {
   return (
     <div className="card mb-4 shadow-sm">
       {/* Блок с ошибкой удаления */}
-      
+
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="card-title mb-0">{news.post_body.topic}</h5>

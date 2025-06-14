@@ -47,28 +47,32 @@ export default function UserItem({ id, user, tab, onRemove, onAccept,
       className="user-item p-3 rounded"
     >
     <div className={`card mb-3 text-white border-0 friend-card`}>
-      <div className="card-body d-flex align-items-center position-relative overflow-hidden">
-        <img
-          src="/avatar.png"
-          alt="Аватар"
-          className="rounded-circle me-3"
-          width="64"
-          height="64"
-        />
-        <div>
-          <h5 className="mb-1">
-            <Link
-              to={(`/profile?other_usr_id=${id}`)}
-              className="text-decoration-none friend-name"
-            >
-              {user.first_name} {user.last_name || ""}
-            </Link>
-          </h5>
-          <p className="mb-0 text-muted">@{user.nickname}</p>
+      <div className="card-body d-flex flex-lg-row flex-column align-items-lg-center align-items-start gap-2 position-relative overflow-hidden">
+        {/* Левая часть — аватар и текст */}
+        <div className="d-flex align-items-center">
+          <img
+            src="/avatar.png"
+            alt="Аватар"
+            className="rounded-circle me-3"
+            width="64"
+            height="64"
+          />
+          <div>
+            <h5 className="mb-1">
+              <Link
+                to={`/profile?other_usr_id=${id}`}
+                className="text-decoration-none friend-name"
+              >
+                {user.first_name} {user.last_name || ""}
+              </Link>
+            </h5>
+            <p className="mb-0 text-muted">@{user.nickname}</p>
+          </div>
         </div>
 
         {/* Панель действия */}
-          { tab && (<div className="remove-panel">
+        {tab && (
+          <div className="remove-panel ms-lg-auto">
             {tab === "friends" && (
               <button
                 className="btn btn-sm remove-btn"
@@ -78,7 +82,6 @@ export default function UserItem({ id, user, tab, onRemove, onAccept,
                 ×
               </button>
             )}
-
             {tab === "requests" && (
               <button
                 className="btn btn-sm accept-btn"
@@ -88,14 +91,17 @@ export default function UserItem({ id, user, tab, onRemove, onAccept,
                 ✓
               </button>
             )}
-          </div>)}
-           { isFriend && !tab && (<div className="ms-auto already-friends-label">
-                       <span className="friend-status">FRIEND</span>
-                     </div>)}
+          </div>
+        )}
 
-           { id === userData.id && (<div className="ms-auto already-friends-label">
-                      <span className="friend-status">YOU</span>
-                    </div>)}
+        {/* Надпись FRIEND или YOU */}
+        {(isFriend || id === userData.id) && !tab && (
+          <div className="already-friends-label ms-lg-auto">
+            <span className="friend-status">
+              {id === userData.id ? "YOU" : "FRIEND"}
+            </span>
+          </div>
+        )}
       </div>
     </div>
     </motion.div>
