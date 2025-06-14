@@ -95,7 +95,7 @@ export default function UserItem({ id, user, tab, onRemove, onAccept,
         )}
 
         {/* Надпись FRIEND или YOU */}
-        {(isFriend || id === userData.id) && (
+        {(isFriend || id === userData.id) && !tab && (
           <div className="already-friends-label ms-lg-auto">
             <span className="friend-status">
               {id === userData.id ? "YOU" : "FRIEND"}

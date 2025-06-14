@@ -106,6 +106,7 @@ export default function Profile() {
   const age = calculateAge(dataToShow.birthday);
 
   return (
+  <>
     <div className="container mb-5">
       <div className="row justify-content-center mt-5">
         <div className="col-md-7 col-lg-7">
@@ -131,10 +132,10 @@ export default function Profile() {
             handleRemoveFriend={handleRemoveFriend}
             handleDeleteAccount={handleDeleteAccount}
           />
-
-          <News key={otherUserId ? otherUserId : userData.id} userId={otherUserId ? otherUserId : userData.id} />
         </div>
       </div>
     </div>
+  <News key={otherUserId ? otherUserId : userData.id} userId={otherUserId ? otherUserId : userData.id} />
+  </>
   );
 }
