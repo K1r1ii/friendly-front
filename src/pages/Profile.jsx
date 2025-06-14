@@ -24,6 +24,7 @@ export default function Profile() {
   const [otherUserData, setOtherUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
+  const [sendInvite, setSendInvite] = useState(false);
 
   // Новые состояния для success сообщений
   const [friendSuccessMessage, setFriendSuccessMessage] = useState("");
@@ -50,7 +51,7 @@ export default function Profile() {
           setIsFriend(userIsFriend);
           setOtherUserData(data);
         } catch (err) {
-          handleApiErrors(err, setErrorCode, setErrorMessage);
+          handleApiErrors(err, setErrorCode, setErrorMessage, false);
           setOtherUserData(null);
           setLoading(false);
         } finally {
@@ -77,6 +78,7 @@ export default function Profile() {
     try {
       await usersAPI.addFriend(otherUserId);
       setFriendSuccessMessage("Friend added");
+      setSendInvite(true);
     } catch (err) {
       handleApiErrors(err, setErrorCode, setErrorMessage);
     }
@@ -123,13 +125,14 @@ export default function Profile() {
             otherUserId={otherUserId}
             age={age}
             isFriend={isFriend}
+            sendInvite={sendInvite}
             loading={loading}
             handleAddFriend={handleAddFriend}
             handleRemoveFriend={handleRemoveFriend}
             handleDeleteAccount={handleDeleteAccount}
           />
 
-          <News userId={otherUserId ? otherUserId : userData.id} />
+          <News key={otherUserId ? otherUserId : userData.id} userId={otherUserId ? otherUserId : userData.id} />
         </div>
       </div>
     </div>
