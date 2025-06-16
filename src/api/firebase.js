@@ -3,7 +3,7 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 // Конфигурация Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyAXe8Kk7SRMvKrlTy0TYfHx5Y27WEB5K_Q",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "friendly-fcm.firebaseapp.com",
   projectId: "friendly-fcm",
   storageBucket: "friendly-fcm.firebasestorage.app",
